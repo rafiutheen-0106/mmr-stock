@@ -1,0 +1,1803 @@
+bash
+
+cat > /mnt/user-data/outputs/index.html << 'HTMLEOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>MMR Footwear — Stock Manager Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --brand:#E63946;--brand2:#D4A017;--brand-glow:rgba(230,57,70,0.25);
+  --bg:#0A0A12;--surface:#1A1A2E;--surface2:#1E1E38;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+  --text:#F0F0FA;--text2:#9898B8;--text3:#6060A0;
+  --green:#22C55E;--yellow:#F59E0B;--red:#EF4444;--blue:#3B82F6;
+  --sidebar:220px;--header:60px;
+  --r:12px;--r2:8px;
+  --shadow:0 8px 32px rgba(0,0,0,0.5);
+  --t:all 0.22s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;-webkit-text-size-adjust:100%}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#0F0F1E}::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:2px}
+
+/* ── LOADING ── */
+#loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;z-index:9999;gap:1rem}
+#loading-screen .spin{width:44px;height:44px;border:3px solid var(--border2);
+  border-top-color:var(--brand);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#loading-screen p{font-size:13px;color:var(--text2)}
+
+/* ── CONFIG MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.82);
+  z-index:9998;align-items:center;justify-content:center;padding:1rem}
+.modal-bg.on{display:flex}
+.modal-box{background:var(--surface);border:1px solid var(--border2);border-radius:20px;
+  padding:2rem;max-width:480px;width:100%;box-shadow:var(--shadow)}
+.modal-box h2{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:.4rem}
+.modal-box p{font-size:13px;color:var(--text2);margin-bottom:1.2rem;line-height:1.6}
+
+/* ── CONFIRM MODAL ── */
+#confirm-modal .modal-box{max-width:360px;text-align:center}
+#confirm-modal h2{font-size:17px;margin-bottom:.6rem}
+#confirm-modal p{margin-bottom:1.4rem}
+.confirm-btns{display:flex;gap:.8rem;justify-content:center}
+
+/* ── PAGES ── */
+.pg{display:none;min-height:100vh}
+.pg.on{display:block}
+#pg-login{display:flex;align-items:center;justify-content:center;min-height:100vh;
+  background:radial-gradient(ellipse at 80% 20%,rgba(230,57,70,.12) 0%,transparent 60%),
+             radial-gradient(ellipse at 20% 80%,rgba(212,160,23,.08) 0%,transparent 60%),var(--bg)}
+
+/* ── LOGIN ── */
+.login-wrap{width:100%;max-width:420px;padding:1rem}
+.login-box{background:rgba(255,255,255,.03);border:1px solid var(--border2);
+  backdrop-filter:blur(20px);border-radius:24px;padding:2.5rem 2rem;
+  box-shadow:var(--shadow);animation:slideUp .5s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.brand-mark{text-align:center;margin-bottom:2rem}
+.brand-icon{width:76px;height:76px;margin:0 auto 1rem;border-radius:20px;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));display:flex;
+  align-items:center;justify-content:center;font-size:34px;box-shadow:0 8px 28px var(--brand-glow)}
+.brand-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:800}
+.brand-sub{font-size:12px;color:var(--text2);margin-top:3px;letter-spacing:.5px}
+.fld{margin-bottom:1.1rem}
+.fld label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.8px;color:var(--text2);margin-bottom:7px}
+.fld input,.fld select,.fld textarea{width:100%;background:rgba(255,255,255,.05);
+  border:1px solid var(--border2);border-radius:var(--r2);padding:12px 14px;
+  font-size:14px;color:var(--text);font-family:'Outfit',sans-serif;outline:none;transition:var(--t)}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--brand);
+  background:rgba(230,57,70,.06);box-shadow:0 0 0 3px var(--brand-glow)}
+.fld input::placeholder,.fld textarea::placeholder{color:var(--text3)}
+.fld select option{background:var(--surface)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  padding:12px 20px;border-radius:var(--r2);border:none;cursor:pointer;
+  font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;transition:var(--t);
+  -webkit-tap-highlight-color:transparent}
+.btn-full{width:100%}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-primary{background:linear-gradient(135deg,var(--brand),#B91C1C);color:#fff;box-shadow:0 4px 16px var(--brand-glow)}
+.btn-primary:not(:disabled):hover{transform:translateY(-1px);box-shadow:0 8px 24px var(--brand-glow)}
+.btn-ghost{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--border2)}
+.btn-ghost:not(:disabled):hover{background:rgba(255,255,255,.09)}
+.btn-gold{background:linear-gradient(135deg,var(--brand2),#92702B);color:#fff}
+.btn-green{background:linear-gradient(135deg,var(--green),#15803D);color:#fff}
+.btn-danger{background:rgba(239,68,68,.15);color:#FCA5A5;border:1px solid rgba(239,68,68,.3)}
+.btn-danger:not(:disabled):hover{background:rgba(239,68,68,.25)}
+.btn-sm{padding:7px 14px;font-size:12px}
+.btn-xs{padding:5px 10px;font-size:11px}
+.err-box,.ok-box{border-radius:var(--r2);padding:10px 14px;font-size:13px;margin-top:10px;display:none;animation:fadeIn .3s ease}
+.err-box{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#FCA5A5}
+.ok-box{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:#86EFAC}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.forgot-lnk,.back-lnk{cursor:pointer;color:var(--text2);font-size:13px;transition:color .2s}
+.forgot-lnk{display:block;text-align:center;margin-top:1rem}
+.back-lnk{display:inline-flex;align-items:center;gap:5px;margin-bottom:1.2rem}
+.forgot-lnk:hover,.back-lnk:hover{color:var(--text)}
+.step-ttl{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;margin-bottom:5px}
+.step-sub{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:1.3rem}
+.otp-row{display:flex;gap:10px;justify-content:center;margin-bottom:1.3rem}
+.otp-box{width:54px;height:58px;background:rgba(255,255,255,.05);border:1px solid var(--border2);
+  border-radius:var(--r2);text-align:center;font-size:22px;font-weight:700;
+  color:var(--text);font-family:'Syne',sans-serif;outline:none;transition:var(--t)}
+.otp-box:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-glow)}
+
+/* ── DASHBOARD SHELL ── */
+#pg-dash{display:none;flex-direction:column;height:100vh;overflow:hidden}
+#pg-dash.on{display:flex}
+
+/* ── HEADER ── */
+.hdr{height:var(--header);background:rgba(10,10,18,.9);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1rem;
+  gap:.8rem;position:sticky;top:0;z-index:100;flex-shrink:0}
+.hbtn{background:none;border:none;color:var(--text);font-size:20px;cursor:pointer;
+  padding:7px;border-radius:8px;transition:background .2s;display:none;flex-shrink:0}
+.hbtn:hover{background:rgba(255,255,255,.07)}
+.hdr-brand{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.hdr-logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;
+  box-shadow:0 3px 12px var(--brand-glow)}
+.hdr-title{font-family:'Syne',sans-serif;font-weight:800;font-size:16px}
+.hdr-badge{font-size:9px;color:var(--brand2);font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.carousel-wrap{flex:1;overflow:hidden;border-radius:10px;margin:0 .8rem;max-width:300px;height:40px;position:relative}
+.carousel-inner{display:flex;transition:transform .7s cubic-bezier(.4,0,.2,1);height:40px}
+.carousel-slide{min-width:100%;height:40px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;font-size:12px;font-weight:500;flex-shrink:0;
+  background:rgba(255,255,255,.04);border:1px solid var(--border)}
+.hdr-right{display:flex;align-items:center;gap:.6rem;margin-left:auto;flex-shrink:0}
+.hdr-date{font-size:11px;color:var(--text2);white-space:nowrap}
+.refresh-btn{background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);
+  color:#93C5FD;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:500;
+  cursor:pointer;font-family:'Outfit',sans-serif;transition:var(--t);white-space:nowrap;
+  -webkit-tap-highlight-color:transparent}
+.refresh-btn:hover{background:rgba(59,130,246,.22)}
+.refresh-btn.spinning svg{animation:spin .7s linear infinite}
+.user-pill{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.05);
+  border:1px solid var(--border2);border-radius:20px;padding:4px 10px 4px 5px}
+.u-av{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--brand),var(--brand2));
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.u-name{font-size:13px;font-weight:500}
+.logout-btn{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);
+  color:#FCA5A5;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:500;
+  cursor:pointer;font-family:'Outfit',sans-serif;transition:var(--t);white-space:nowrap}
+.logout-btn:hover{background:rgba(239,68,68,.2)}
+
+/* ── BODY ── */
+.dash-body{display:flex;flex:1;overflow:hidden}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:90}
+.overlay.on{display:block}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar);background:rgba(8,8,16,.98);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;padding:1rem 0;flex-shrink:0;overflow-y:auto;
+  transition:transform .28s cubic-bezier(.4,0,.2,1)}
+.sb-label{font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--text3);padding:0 1rem;margin:1rem 0 5px}
+.nav-i{display:flex;align-items:center;gap:10px;padding:10px 1rem;font-size:13.5px;
+  color:var(--text2);cursor:pointer;transition:var(--t);border-left:3px solid transparent;
+  border-radius:0 var(--r2) var(--r2) 0;margin:1px 8px 1px 0;
+  -webkit-tap-highlight-color:transparent}
+.nav-i:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.nav-i.on{color:var(--text);background:rgba(230,57,70,.1);border-left-color:var(--brand);font-weight:500}
+.nav-i .ni{font-size:17px;width:20px;text-align:center;flex-shrink:0}
+.nbadge{margin-left:auto;background:var(--brand);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px}
+.sb-div{height:1px;background:var(--border);margin:6px 0}
+.sb-foot{margin-top:auto;padding:1rem;border-top:1px solid var(--border)}
+.sb-foot p{font-size:10px;color:var(--text3);line-height:1.6}
+
+/* ── MAIN CONTENT ── */
+.main{flex:1;overflow-y:auto;padding:1.5rem;background:var(--bg)}
+.section{display:none}
+.section.on{display:block}
+.pg-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:3px}
+.pg-sub{font-size:12.5px;color:var(--text2);margin-bottom:1.5rem}
+
+/* ── KPI ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.5rem}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:1rem;position:relative;overflow:hidden;transition:var(--t)}
+.kpi:hover{border-color:var(--border2);transform:translateY(-2px)}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi.r::before{background:var(--brand)}.kpi.g::before{background:var(--green)}
+.kpi.y::before{background:var(--yellow)}.kpi.b::before{background:var(--blue)}
+.kpi-icon{font-size:18px;margin-bottom:7px}
+.kpi-val{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;line-height:1;margin-bottom:3px}
+.kpi-lbl{font-size:11px;color:var(--text2)}
+
+/* ── TABLES ── */
+.tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;overflow-x:auto}
+.tbl-hdr{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.1rem;
+  border-bottom:1px solid var(--border);gap:.8rem;flex-wrap:wrap}
+.tbl-hdr h3{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;white-space:nowrap}
+.search-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.search-inp{background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:var(--r2);
+  padding:8px 12px;font-size:13px;color:var(--text);font-family:'Outfit',sans-serif;
+  outline:none;transition:var(--t);width:200px;max-width:100%}
+.search-inp:focus{border-color:var(--brand);box-shadow:0 0 0 2px var(--brand-glow)}
+.search-inp::placeholder{color:var(--text3)}
+.filter-sel{background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:var(--r2);
+  padding:8px 12px;font-size:12px;color:var(--text);font-family:'Outfit',sans-serif;outline:none}
+.filter-sel option{background:var(--surface)}
+table{width:100%;border-collapse:collapse;min-width:500px}
+thead{background:rgba(255,255,255,.03)}
+th{text-align:left;font-size:10.5px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;
+  color:var(--text2);padding:10px 13px;white-space:nowrap}
+td{padding:11px 13px;font-size:13px;border-top:1px solid var(--border);vertical-align:middle}
+tr:hover td{background:rgba(255,255,255,.02)}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap}
+.pill.ok{background:rgba(34,197,94,.12);color:#86EFAC}
+.pill.low{background:rgba(245,158,11,.12);color:#FCD34D}
+.pill.out{background:rgba(239,68,68,.12);color:#FCA5A5}
+.cat-tag{background:rgba(255,255,255,.07);border-radius:6px;padding:3px 8px;font-size:11px;color:var(--text2);white-space:nowrap}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.dot.ok{background:var(--green)}.dot.low{background:var(--yellow)}.dot.out{background:var(--red)}
+.sz-detail{font-size:10.5px;color:var(--text3);line-height:1.8;max-width:180px}
+.sz-chip{display:inline-block;background:rgba(255,255,255,.06);border-radius:4px;padding:1px 5px;margin:1px;white-space:nowrap}
+
+/* ── FORMS ── */
+.form-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem;margin-bottom:1rem}
+.form-card h3{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:1rem;
+  padding-bottom:.7rem;border-bottom:1px solid var(--border)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-grid .full{grid-column:1/-1}
+.cat-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem}
+.cat-tab{padding:6px 14px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;
+  background:rgba(255,255,255,.05);border:1px solid var(--border2);color:var(--text2);transition:var(--t);
+  -webkit-tap-highlight-color:transparent}
+.cat-tab.on,.cat-tab:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+.size-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(95px,1fr));gap:8px;margin-top:.5rem}
+.size-item{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r2);padding:7px 9px}
+.size-item label{font-size:11px;color:var(--text2);display:block;margin-bottom:4px}
+.size-item input{width:100%;background:rgba(255,255,255,.06);border:1px solid var(--border2);
+  border-radius:6px;padding:5px 8px;font-size:13px;color:var(--text);font-family:'Outfit',sans-serif;outline:none}
+.size-item input:focus{border-color:var(--brand)}
+.qty-match{font-size:12px;padding:8px 12px;border-radius:var(--r2);margin-top:8px}
+.qty-match.ok{background:rgba(34,197,94,.1);color:#86EFAC}
+.qty-match.err{background:rgba(239,68,68,.1);color:#FCA5A5}
+/* custom type input */
+.custom-type-wrap{display:none;margin-top:.5rem}
+.custom-type-wrap input{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--brand);
+  border-radius:var(--r2);padding:10px 14px;font-size:14px;color:var(--text);
+  font-family:'Outfit',sans-serif;outline:none;transition:var(--t)}
+.custom-type-wrap input::placeholder{color:var(--text3)}
+
+/* ── REDUCE SIZE ROWS ── */
+.sz-reduce-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.sz-reduce-row:last-child{border-bottom:none}
+.sz-label{font-size:13px;font-weight:500;min-width:80px}
+.sz-current{font-family:'Syne',sans-serif;font-weight:700;min-width:80px;color:var(--text2);font-size:13px}
+.sz-inp{width:80px;background:rgba(255,255,255,.05);border:1px solid var(--border2);
+  border-radius:6px;padding:6px 8px;font-size:13px;color:var(--text);font-family:'Outfit',sans-serif;outline:none}
+.sz-inp:focus{border-color:var(--brand)}
+
+/* ── SELL CALC ── */
+.sell-calc{background:rgba(230,57,70,.06);border:1px solid rgba(230,57,70,.2);
+  border-radius:var(--r2);padding:1rem;margin-top:8px;font-size:13px}
+.profit-line{display:flex;justify-content:space-between;align-items:center;margin-top:5px}
+.profit-val{font-family:'Syne',sans-serif;font-size:16px;font-weight:700}
+.profit-pos{color:var(--green)}.profit-neg{color:var(--red)}
+
+/* ── DATE BAR ── */
+.date-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.date-bar input[type="date"]{background:rgba(255,255,255,.05);border:1px solid var(--border2);
+  border-radius:var(--r2);padding:7px 10px;font-size:12px;color:var(--text);
+  font-family:'Outfit',sans-serif;outline:none}
+
+/* ── CHARTS ── */
+.chart-area{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.2rem;margin-bottom:1rem}
+.chart-area h3{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:1rem}
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:110px;padding-bottom:22px;position:relative;overflow-x:auto}
+.bar-chart::after{content:'';position:absolute;bottom:22px;left:0;right:0;height:1px;background:var(--border)}
+.bar{flex:1;border-radius:5px 5px 0 0;transition:var(--t);cursor:pointer;position:relative;min-width:18px}
+.bar:hover{filter:brightness(1.2)}
+.bar span{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--text2);white-space:nowrap}
+.bar-val{position:absolute;top:-17px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:600;white-space:nowrap}
+.legend{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:8px}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
+.legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.pie-canvas-wrap{position:relative;height:200px;display:flex;align-items:center;justify-content:center}
+
+/* ── REPORT FILTERS ── */
+.report-filter-bar{display:flex;gap:.8rem;flex-wrap:wrap;align-items:center;margin-bottom:1rem;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:.8rem 1rem}
+.rtab-row{display:flex;gap:6px;margin-bottom:1rem;background:rgba(255,255,255,.04);
+  padding:4px;border-radius:10px;border:1px solid var(--border)}
+.rtab{flex:1;text-align:center;padding:7px;font-size:12px;font-weight:500;border-radius:8px;
+  cursor:pointer;transition:var(--t);color:var(--text2)}
+.rtab.on{background:var(--brand);color:#fff}
+
+/* ── HISTORY ── */
+.history-item{display:flex;gap:1rem;padding:1rem;border-bottom:1px solid var(--border);align-items:flex-start}
+.h-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;
+  justify-content:center;font-size:14px;flex-shrink:0;font-weight:700}
+.h-icon.add{background:rgba(34,197,94,.15);color:var(--green)}
+.h-icon.sell{background:rgba(59,130,246,.15);color:var(--blue)}
+.h-icon.reduce{background:rgba(245,158,11,.15);color:var(--yellow)}
+.h-icon.login{background:rgba(168,85,247,.15);color:#A855F7}
+.h-time{font-size:11px;color:var(--text3);margin-top:3px}
+.h-desc{font-size:13px;margin-bottom:2px;word-break:break-word}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:1.2rem;right:1.2rem;z-index:9999;background:var(--surface2);
+  border:1px solid var(--border2);border-radius:var(--r);padding:.9rem 1.2rem;
+  box-shadow:var(--shadow);display:none;max-width:300px;width:calc(100vw - 2.4rem)}
+.toast.on{display:flex;gap:10px;align-items:flex-start;animation:slideUp .3s ease}
+.toast-icon{font-size:16px;flex-shrink:0;font-weight:700;margin-top:1px}
+.toast-body p{font-size:13px;font-weight:500}
+.toast-body span{font-size:11px;color:var(--text2)}
+
+/* ── SPINNER INLINE ── */
+.spin-sm{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.2);
+  border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle}
+
+/* ── MOBILE ── */
+@media(max-width:900px){
+  .charts-row{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .hbtn{display:flex}
+  .sidebar{position:fixed;top:0;left:0;height:100vh;z-index:95;
+    transform:translateX(-100%);padding-top:68px;width:min(var(--sidebar), 85vw)}
+  .sidebar.on{transform:translateX(0)}
+  .carousel-wrap{display:none}
+  .form-grid{grid-template-columns:1fr}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .hdr-date{display:none}
+  .user-pill .u-name{display:none}
+  table{min-width:400px}
+}
+@media(max-width:480px){
+  .main{padding:.9rem}
+  .login-box{padding:1.8rem 1.1rem}
+  .otp-box{width:46px;height:50px;font-size:18px}
+  .search-inp{width:100%}
+  .hdr{padding:0 .7rem;gap:.5rem}
+  .hdr-title{font-size:14px}
+  .hdr-badge{display:none}
+  .logout-btn{padding:5px 9px;font-size:11px}
+  .refresh-btn{padding:5px 9px;font-size:11px}
+  .kpi-val{font-size:22px}
+  .btn-xs{padding:4px 8px;font-size:10px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="spin"></div>
+  <p id="loading-msg">Connecting to MMR Footwear...</p>
+</div>
+
+<!-- CONFIG MODAL -->
+<div id="config-modal" class="modal-bg">
+  <div class="modal-box">
+    <h2>&#9881; Connect to Google Sheets</h2>
+    <p>Paste your Google Apps Script Web App URL to connect to the live database.</p>
+    <div class="fld">
+      <label>Apps Script Web App URL</label>
+      <input type="url" id="cfg-url" placeholder="https://script.google.com/macros/s/...">
+    </div>
+    <button class="btn btn-primary btn-full" onclick="saveConfig()">Connect &amp; Load</button>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div id="confirm-modal" class="modal-bg">
+  <div class="modal-box">
+    <h2 id="confirm-title">Are you sure?</h2>
+    <p id="confirm-msg">This action cannot be undone.</p>
+    <div class="confirm-btns">
+      <button class="btn btn-ghost btn-sm" onclick="confirmResolve(false)">Cancel</button>
+      <button class="btn btn-danger btn-sm" id="confirm-ok-btn" onclick="confirmResolve(true)">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN PAGE -->
+<div id="pg-login" class="pg on">
+  <div class="login-wrap">
+    <div class="login-box" id="s-login">
+      <div class="brand-mark">
+        <div class="brand-icon">&#128197;</div>
+        <div class="brand-name">MMR Footwear</div>
+        <div class="brand-sub">Stock Management Pro</div>
+      </div>
+      <div class="fld"><label>User ID</label>
+        <input type="text" id="l-uid" placeholder="Enter User ID" autocomplete="username"></div>
+      <div class="fld"><label>Password</label>
+        <input type="password" id="l-pwd" placeholder="Enter Password" autocomplete="current-password"></div>
+      <div class="err-box" id="l-err">Invalid User ID or Password.</div>
+      <button class="btn btn-primary btn-full" style="margin-top:.5rem" id="login-btn" onclick="doLogin()">Login</button>
+      <span class="forgot-lnk" onclick="goStep('s-forgot')">Forgot Password?</span>
+    </div>
+    <div class="login-box" id="s-forgot" style="display:none">
+      <span class="back-lnk" onclick="goStep('s-login')">&#8592; Back</span>
+      <div class="step-ttl">Reset Password</div>
+      <div class="step-sub">Enter your registered admin email.</div>
+      <div class="fld"><label>Email Address</label>
+        <input type="email" id="f-email" placeholder="rafiutheen66@gmail.com"></div>
+      <div class="err-box" id="f-err"></div>
+      <div class="ok-box" id="f-ok">OTP sent! Check your inbox.</div>
+      <button class="btn btn-primary btn-full" id="otp-send-btn" onclick="sendOTP()">Send OTP</button>
+    </div>
+    <div class="login-box" id="s-otp" style="display:none">
+      <span class="back-lnk" onclick="goStep('s-forgot')">&#8592; Back</span>
+      <div class="step-ttl">Enter OTP</div>
+      <div class="step-sub">4-digit OTP sent to <strong id="otp-em" style="color:var(--brand2)"></strong></div>
+      <div class="otp-row">
+        <input class="otp-box" id="o1" maxlength="1" type="text" inputmode="numeric" oninput="onxt(this,'o2')">
+        <input class="otp-box" id="o2" maxlength="1" type="text" inputmode="numeric" oninput="onxt(this,'o3')">
+        <input class="otp-box" id="o3" maxlength="1" type="text" inputmode="numeric" oninput="onxt(this,'o4')">
+        <input class="otp-box" id="o4" maxlength="1" type="text" inputmode="numeric" oninput="onxt(this,null)">
+      </div>
+      <div class="err-box" id="o-err"></div>
+      <button class="btn btn-primary btn-full" onclick="verOTP()">Verify OTP</button>
+      <span class="forgot-lnk" onclick="sendOTP()">Resend OTP</span>
+    </div>
+    <div class="login-box" id="s-newpass" style="display:none">
+      <span class="back-lnk" onclick="goStep('s-otp')">&#8592; Back</span>
+      <div class="step-ttl">New Credentials</div>
+      <div class="step-sub">Set your new User ID and Password.</div>
+      <div class="fld"><label>New User ID</label><input type="text" id="n-uid"></div>
+      <div class="fld"><label>New Password</label><input type="password" id="n-pwd" placeholder="Min 6 chars"></div>
+      <div class="fld"><label>Confirm Password</label><input type="password" id="n-cpwd"></div>
+      <div class="err-box" id="n-err"></div>
+      <div class="ok-box" id="n-ok">Updated! Redirecting...</div>
+      <button class="btn btn-primary btn-full" onclick="savePass()">Save &amp; Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="pg-dash" class="pg">
+  <header class="hdr">
+    <button class="hbtn" onclick="toggleSB()">&#9776;</button>
+    <div class="hdr-brand">
+      <div class="hdr-logo">&#128197;</div>
+      <div>
+        <div class="hdr-title">MMR Footwear</div>
+        <div class="hdr-badge">Stock Pro</div>
+      </div>
+    </div>
+    <div class="carousel-wrap">
+      <div class="carousel-inner" id="carousel">
+        <div class="carousel-slide">&#128165; Chappal Collection</div>
+        <div class="carousel-slide">&#128131; Shoes &amp; Formals</div>
+        <div class="carousel-slide">&#127890; Bags &amp; Backpacks</div>
+        <div class="carousel-slide">&#9748; Umbrellas</div>
+        <div class="carousel-slide">&#127881; MMR Footwear!</div>
+      </div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-date" id="hdr-date"></div>
+      <button class="refresh-btn" id="refresh-btn" onclick="globalRefresh()" title="Refresh all data">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:4px"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>Refresh
+      </button>
+      <div class="user-pill">
+        <div class="u-av" id="uav"><span id="uav-txt">A</span></div>
+        <span class="u-name" id="u-name-disp">Admin</span>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="dash-body">
+    <div class="overlay" id="overlay" onclick="closeSB()"></div>
+    <nav class="sidebar" id="sidebar">
+      <div class="sb-label">Main</div>
+      <div class="nav-i on" onclick="navTo(this,'sec-dash')"><span class="ni">&#128200;</span> Dashboard</div>
+      <div class="nav-i" onclick="navTo(this,'sec-products')"><span class="ni">&#128722;</span> Products <span class="nbadge" id="nb-prod">0</span></div>
+      <div class="nav-i" onclick="navTo(this,'sec-addstock')"><span class="ni">&#10133;</span> Add Stock</div>
+      <div class="nav-i" onclick="navTo(this,'sec-reduce')"><span class="ni">&#128215;</span> Reduce Stock</div>
+      <div class="nav-i" onclick="navTo(this,'sec-sell')"><span class="ni">&#128176;</span> Sell Stock</div>
+      <div class="sb-div"></div>
+      <div class="sb-label">Reports</div>
+      <div class="nav-i" onclick="navTo(this,'sec-report')"><span class="ni">&#128202;</span> Stock Report</div>
+      <div class="nav-i" onclick="navTo(this,'sec-low')"><span class="ni">&#9888;</span> Low Stock <span class="nbadge" id="nb-low">0</span></div>
+      <div class="nav-i" onclick="navTo(this,'sec-history')"><span class="ni">&#128336;</span> History</div>
+      <div class="sb-div"></div>
+      <div class="sb-label">Settings</div>
+      <div class="nav-i" onclick="navTo(this,'sec-settings')"><span class="ni">&#9881;</span> Settings</div>
+      <div class="sb-foot"><p>MMR Footwear<br>Stock Manager Pro v4.0<br>&copy; 2025 MMR</p></div>
+    </nav>
+
+    <main class="main">
+
+      <!-- DASHBOARD -->
+      <div class="section on" id="sec-dash">
+        <div class="pg-title">Dashboard</div>
+        <div class="pg-sub" id="dash-greet">Welcome! Loading overview...</div>
+        <div class="kpi-grid">
+          <div class="kpi r"><div class="kpi-icon">&#128230;</div><div class="kpi-val" id="kpi-types">—</div><div class="kpi-lbl">Product Types</div></div>
+          <div class="kpi b"><div class="kpi-icon">&#128722;</div><div class="kpi-val" id="kpi-total">—</div><div class="kpi-lbl">Total Stock</div></div>
+          <div class="kpi g"><div class="kpi-icon">&#10004;</div><div class="kpi-val" id="kpi-in">—</div><div class="kpi-lbl">In Stock</div></div>
+          <div class="kpi y"><div class="kpi-icon">&#9888;</div><div class="kpi-val" id="kpi-low">—</div><div class="kpi-lbl">Low / Out</div></div>
+        </div>
+        <div class="chart-area">
+          <h3>&#128200; Stock by Category</h3>
+          <div class="bar-chart" id="dash-chart"></div>
+          <div class="legend" id="dash-legend"></div>
+        </div>
+        <div class="tbl-wrap">
+          <div class="tbl-hdr"><h3>&#128336; Recent Activity</h3>
+            <button class="btn btn-ghost btn-sm" onclick="loadHistory()">&#8635; Refresh</button>
+          </div>
+          <div id="dash-recent-list"><div style="padding:1.5rem;text-align:center;color:var(--text3)">Loading...</div></div>
+        </div>
+      </div>
+
+      <!-- PRODUCTS -->
+      <div class="section" id="sec-products">
+        <div class="pg-title">Products</div>
+        <div class="pg-sub">All inventory with size breakdown.</div>
+        <div class="tbl-wrap">
+          <div class="tbl-hdr">
+            <h3>All Products</h3>
+            <div class="search-row">
+              <input class="search-inp" id="prod-search" placeholder="Search..." oninput="renderProducts()">
+              <select class="filter-sel" id="prod-cat-f" onchange="renderProducts()">
+                <option value="">All Categories</option>
+                <option>Men</option><option>Women</option><option>Boy Baby</option><option>Girl Baby</option><option>Other</option>
+              </select>
+            </div>
+          </div>
+          <table>
+            <thead><tr><th>#</th><th>Product</th><th>No.</th><th>Cat.</th><th>Qty</th><th>Size Details</th><th>Status</th><th>Price</th><th>Actions</th></tr></thead>
+            <tbody id="prod-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ADD STOCK -->
+      <div class="section" id="sec-addstock">
+        <div class="pg-title">Add Stock</div>
+        <div class="pg-sub">Add new or restock existing products.</div>
+        <div class="form-card">
+          <h3>Category &amp; Type</h3>
+          <div class="cat-tabs">
+            <div class="cat-tab on" onclick="selCat(this,'Men')">Men</div>
+            <div class="cat-tab" onclick="selCat(this,'Women')">Women</div>
+            <div class="cat-tab" onclick="selCat(this,'Boy Baby')">Boy Baby</div>
+            <div class="cat-tab" onclick="selCat(this,'Girl Baby')">Girl Baby</div>
+            <div class="cat-tab" onclick="selCat(this,'Other')">Other</div>
+          </div>
+          <div class="fld">
+            <label>Product Type</label>
+            <select id="add-prod-type" class="filter-sel" style="width:100%" onchange="onTypeChange()">
+              <option value="">-- Select Type --</option>
+              <option>Chappal</option><option>Shoes</option><option>Sandal</option>
+              <option>Cap</option><option>Belt</option><option>School Bag</option>
+              <option>Travel Bag</option><option>Umbrella</option><option>Handkerchief</option>
+              <option>Water Bottle</option><option>Floor Mat</option><option>Mug</option>
+              <option>Jug</option><option value="Other">Other (Custom)</option>
+            </select>
+            <div class="custom-type-wrap" id="custom-type-wrap">
+              <input type="text" id="custom-type-inp" placeholder="Type your custom product name...">
+            </div>
+          </div>
+        </div>
+        <div class="form-card">
+          <h3>Product Details</h3>
+          <div class="form-grid">
+            <div class="fld"><label>Product Name</label><input type="text" id="a-name" placeholder="e.g. Air Max Chappal"></div>
+            <div class="fld"><label>Product Number</label><input type="text" id="a-num" placeholder="e.g. MMR-001"></div>
+            <div class="fld"><label>Actual Price (Rs.)</label><input type="number" id="a-price" placeholder="0.00" min="0"></div>
+            <div class="fld"><label>Quality / Notes</label><input type="text" id="a-quality" placeholder="e.g. Premium"></div>
+          </div>
+          <div class="fld">
+            <label>Total Quantity</label>
+            <input type="number" id="a-total-qty" placeholder="Enter total quantity" min="0" oninput="checkQtyMatch()">
+          </div>
+          <label style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text2);display:block;margin-bottom:8px">Size Breakdown</label>
+          <div class="size-grid" id="size-grid"></div>
+          <div class="qty-match" id="qty-match-msg" style="display:none"></div>
+        </div>
+        <button class="btn btn-green" id="add-btn" onclick="addStock()">Add to Inventory</button>
+      </div>
+
+      <!-- REDUCE STOCK -->
+      <div class="section" id="sec-reduce">
+        <div class="pg-title">Reduce Stock</div>
+        <div class="pg-sub">Adjust sizes or delete a product entirely.</div>
+        <div class="form-card">
+          <h3>Select Product</h3>
+          <div class="fld">
+            <label>Product</label>
+            <select id="red-prod-sel" class="filter-sel" style="width:100%" onchange="loadReduceSizes()">
+              <option value="">-- Select Product --</option>
+            </select>
+          </div>
+          <div id="red-sizes-wrap" style="display:none">
+            <h3 style="margin-top:1rem;margin-bottom:.8rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)">Reduce by Size</h3>
+            <div id="red-sizes-list"></div>
+            <div class="fld" style="margin-top:1rem">
+              <label>Reason</label>
+              <input type="text" id="red-reason" placeholder="e.g. Damaged, Correction...">
+            </div>
+            <div style="display:flex;gap:.8rem;flex-wrap:wrap;margin-top:.8rem">
+              <button class="btn btn-gold btn-sm" id="red-apply-btn" onclick="applyReduce()">Apply Reduction</button>
+              <button class="btn btn-danger btn-sm" id="red-delete-btn" onclick="deleteProduct()">&#128465; Delete Product</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SELL STOCK -->
+      <div class="section" id="sec-sell">
+        <div class="pg-title">Sell Stock</div>
+        <div class="pg-sub">Record a sale and update inventory live.</div>
+        <div class="form-card">
+          <h3>New Sale</h3>
+          <div class="form-grid">
+            <div class="fld full">
+              <label>Product</label>
+              <select id="sell-prod" class="filter-sel" style="width:100%" onchange="sellProdChanged()">
+                <option value="">-- Select Product --</option>
+              </select>
+            </div>
+            <div class="fld">
+              <label>Size</label>
+              <select id="sell-size" class="filter-sel" style="width:100%" onchange="calcProfit()">
+                <option value="">-- Select Size --</option>
+              </select>
+            </div>
+            <div class="fld"><label>Qty to Sell</label><input type="number" id="sell-qty" value="1" min="1" oninput="calcProfit()"></div>
+            <div class="fld full"><label>Selling Price (Rs.)</label><input type="number" id="sell-price" placeholder="0.00" oninput="calcProfit()"></div>
+          </div>
+          <div class="sell-calc" id="sell-calc" style="display:none">
+            <div style="font-size:11px;color:var(--text2);margin-bottom:6px">PROFIT / LOSS</div>
+            <div class="profit-line">
+              <span>Actual: <strong id="sc-actual">Rs.0</strong></span>
+              <span>Selling: <strong id="sc-sell">Rs.0</strong></span>
+            </div>
+            <div class="profit-line" style="margin-top:8px">
+              <span style="font-size:12px">Net/unit:</span><span class="profit-val" id="sc-net">—</span>
+            </div>
+            <div class="profit-line">
+              <span style="font-size:12px">Total P/L:</span><span class="profit-val" id="sc-total">—</span>
+            </div>
+            <div class="profit-line">
+              <span style="font-size:12px">Margin:</span><span class="profit-val" id="sc-pct">—</span>
+            </div>
+          </div>
+          <div class="err-box" id="sell-err" style="margin-top:10px"></div>
+          <button class="btn btn-primary" style="margin-top:1rem" id="sell-btn" onclick="doSell()">Sell Product</button>
+        </div>
+        <div class="tbl-wrap" style="margin-top:1rem">
+          <div class="tbl-hdr">
+            <h3>Sales Record</h3>
+            <div class="date-bar">
+              <button class="btn btn-ghost btn-sm" onclick="filterSales('today')" id="sb-today" style="background:rgba(230,57,70,.15);color:var(--brand)">Today</button>
+              <button class="btn btn-ghost btn-sm" onclick="filterSales('all')" id="sb-all">All</button>
+              <input type="date" id="sell-date-from" onchange="filterSales('range')">
+              <span style="font-size:12px;color:var(--text2)">to</span>
+              <input type="date" id="sell-date-to" onchange="filterSales('range')">
+            </div>
+          </div>
+          <table>
+            <thead><tr><th>Time</th><th>Product</th><th>Size</th><th>Qty</th><th>Price</th><th>Profit</th><th>Margin</th><th>Undo</th></tr></thead>
+            <tbody id="sales-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- STOCK REPORT -->
+      <div class="section" id="sec-report">
+        <div class="pg-title">Stock Report</div>
+        <div class="pg-sub">Analytics, pie chart, and export.</div>
+        <div class="rtab-row">
+          <div class="rtab on" onclick="repTab(this,'all')">All</div>
+          <div class="rtab" onclick="repTab(this,'Men')">Men</div>
+          <div class="rtab" onclick="repTab(this,'Women')">Women</div>
+          <div class="rtab" onclick="repTab(this,'Boy Baby')">Boy</div>
+          <div class="rtab" onclick="repTab(this,'Girl Baby')">Girl</div>
+          <div class="rtab" onclick="repTab(this,'Other')">Other</div>
+        </div>
+        <div class="charts-row">
+          <div class="chart-area">
+            <h3>&#128200; Stock by Product</h3>
+            <div class="bar-chart" id="rep-chart"></div>
+          </div>
+          <div class="chart-area">
+            <h3>&#9685; Category Distribution</h3>
+            <div class="pie-canvas-wrap">
+              <canvas id="pie-chart" width="200" height="200"></canvas>
+            </div>
+            <div class="legend" id="pie-legend"></div>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <div class="tbl-hdr">
+            <h3>Detailed Audit</h3>
+            <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+              <button class="btn btn-ghost btn-sm" onclick="dlPDF()">&#128438; PDF</button>
+              <button class="btn btn-gold btn-sm" onclick="dlCSV()">&#128196; Export CSV</button>
+            </div>
+          </div>
+          <table>
+            <thead><tr><th>Product</th><th>Model #</th><th>Category</th><th>Price</th><th>Total Units</th><th>Sizes</th><th>Valuation</th><th>Status</th></tr></thead>
+            <tbody id="rep-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- LOW STOCK -->
+      <div class="section" id="sec-low">
+        <div class="pg-title">Low Stock Alerts</div>
+        <div class="pg-sub">Products needing restock.</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Product</th><th>Number</th><th>Category</th><th>Stock</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="low-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- HISTORY -->
+      <div class="section" id="sec-history">
+        <div class="pg-title">Activity History</div>
+        <div class="pg-sub">Live log from Google Sheets.</div>
+        <div class="tbl-wrap">
+          <div class="tbl-hdr">
+            <h3>Log</h3>
+            <div style="display:flex;gap:.6rem;align-items:center">
+              <input class="search-inp" id="hist-search" placeholder="Search..." oninput="renderHistory()">
+              <button class="btn btn-ghost btn-sm" onclick="loadHistory()">&#8635;</button>
+            </div>
+          </div>
+          <div id="hist-list"></div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="section" id="sec-settings">
+        <div class="pg-title">Settings</div>
+        <div class="pg-sub">Configure your app.</div>
+        <div class="form-card">
+          <h3>&#127760; API Connection</h3>
+          <div class="fld">
+            <label>Apps Script Web App URL</label>
+            <input type="url" id="set-api-url" placeholder="https://script.google.com/macros/s/...">
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="saveApiUrl()">Update &amp; Reload</button>
+        </div>
+        <div class="form-card">
+          <h3>&#128276; Preferences</h3>
+          <div class="form-grid">
+            <div class="fld">
+              <label>Low Stock Threshold</label>
+              <input type="number" id="low-thresh" value="5" min="1">
+            </div>
+            <div class="fld">
+              <label>Currency Symbol</label>
+              <select id="currency-sym">
+                <option value="Rs.">Rs. — Indian Rupee</option>
+                <option value="$">$ — USD</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="saveSettings()">Save</button>
+        </div>
+        <div class="form-card">
+          <h3>&#128274; Change Password</h3>
+          <div class="form-grid">
+            <div class="fld"><label>Current Password</label><input type="password" id="set-cur-pwd" placeholder="Current"></div>
+            <div class="fld"><label>New Password</label><input type="password" id="set-new-pwd" placeholder="New (min 6)"></div>
+          </div>
+          <div class="err-box" id="set-err"></div>
+          <div class="ok-box" id="set-ok"></div>
+          <button class="btn btn-ghost btn-sm" style="margin-top:.6rem" onclick="changePwd()">Update Password</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-icon" id="t-icon">!</div>
+  <div class="toast-body"><p id="t-msg"></p><span id="t-sub"></span></div>
+</div>
+
+<script>
+// ============================================================
+// STATE & CONFIG
+// ============================================================
+let API_URL     = localStorage.getItem('mmr_api_url') || '';
+let products    = [];
+let allSales    = [];
+let allHistory  = [];
+let selCatName  = 'Men';
+let lowThresh   = parseInt(localStorage.getItem('mmr_thresh') || '5');
+let curSym      = localStorage.getItem('mmr_sym') || 'Rs.';
+let salesFilter = 'today';
+let loggedUID   = '';
+let localPwd    = '';
+let repFilterCat = 'all';
+let pieChartInst = null;
+let confirmCb    = null;
+
+// ============================================================
+// API
+// ============================================================
+async function api(params) {
+  if (!API_URL) { toast('!', 'No API URL', 'Set it in Settings'); return null; }
+  try {
+    const url = API_URL + '?' + new URLSearchParams(params).toString();
+    const res = await fetch(url, {mode: 'cors'});
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return await res.json();
+  } catch(e) {
+    toast('!', 'Connection error', e.message);
+    return null;
+  }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded', async () => {
+  document.getElementById('set-api-url').value  = API_URL;
+  document.getElementById('low-thresh').value   = lowThresh;
+  document.getElementById('currency-sym').value = curSym;
+  if (!API_URL) { hide('loading-screen'); openModal('config-modal'); return; }
+  await loadInit();
+});
+
+function openModal(id)  { document.getElementById(id).classList.add('on'); }
+function closeModal(id) { document.getElementById(id).classList.remove('on'); }
+
+async function saveConfig() {
+  const url = document.getElementById('cfg-url').value.trim();
+  if (!url.startsWith('https://')) { toast('!', 'Invalid URL'); return; }
+  localStorage.setItem('mmr_api_url', url);
+  API_URL = url;
+  closeModal('config-modal');
+  show('loading-screen');
+  await loadInit();
+}
+
+async function loadInit() {
+  document.getElementById('loading-msg').textContent = 'Loading data from Google Sheets...';
+  const data = await api({action: 'init'});
+  hide('loading-screen');
+  if (!data || !data.ok) { openModal('config-modal'); return; }
+  products = (data.products || []).map(normaliseProduct);
+  showLogin();
+}
+
+function normaliseProduct(p) {
+  p.price = Number(p.price) || 0;
+  p.qty   = Number(p.qty)   || 0;
+  if (typeof p.sizes === 'string') {
+    try { p.sizes = JSON.parse(p.sizes); } catch { p.sizes = {}; }
+  }
+  if (!p.sizes || typeof p.sizes !== 'object') p.sizes = {};
+  return p;
+}
+
+function show(id) { document.getElementById(id).style.display = ''; }
+function hide(id) { document.getElementById(id).style.display = 'none'; }
+
+function showLogin() {
+  document.getElementById('pg-login').style.display = 'flex';
+  document.getElementById('pg-login').classList.add('on');
+}
+
+// ============================================================
+// CONFIRM DIALOG
+// ============================================================
+function confirm2(title, msg, okLabel) {
+  return new Promise(resolve => {
+    document.getElementById('confirm-title').textContent = title;
+    document.getElementById('confirm-msg').textContent   = msg;
+    document.getElementById('confirm-ok-btn').textContent = okLabel || 'Confirm';
+    confirmCb = resolve;
+    openModal('confirm-modal');
+  });
+}
+function confirmResolve(val) {
+  closeModal('confirm-modal');
+  if (confirmCb) { confirmCb(val); confirmCb = null; }
+}
+
+// ============================================================
+// GLOBAL REFRESH
+// ============================================================
+async function globalRefresh() {
+  const btn = document.getElementById('refresh-btn');
+  btn.classList.add('spinning');
+  btn.disabled = true;
+  const data = await api({action: 'init'});
+  if (data && data.ok) {
+    products = (data.products || []).map(normaliseProduct);
+    updateAll();
+    // refresh whichever section is active
+    const active = document.querySelector('.section.on');
+    if (active) {
+      const id = active.id;
+      if (id === 'sec-products')  renderProducts();
+      if (id === 'sec-reduce')    loadReduceDropdown();
+      if (id === 'sec-sell')      { renderSellDropdown(); }
+      if (id === 'sec-report')    renderReport();
+      if (id === 'sec-low')       renderLow();
+    }
+    await loadHistory();
+    if (document.getElementById('sec-sell').classList.contains('on')) {
+      await loadSales();
+    }
+    toast('OK', 'Data refreshed', 'Synced with Google Sheets');
+  }
+  btn.classList.remove('spinning');
+  btn.disabled = false;
+}
+
+// ============================================================
+// LOGIN
+// ============================================================
+function goStep(id) {
+  document.querySelectorAll('#pg-login .login-box').forEach(b => b.style.display = 'none');
+  document.getElementById(id).style.display = '';
+  clearMsgs();
+}
+function clearMsgs() {
+  document.querySelectorAll('.err-box,.ok-box').forEach(e => e.style.display = 'none');
+}
+function showErr(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+async function doLogin() {
+  const uid = document.getElementById('l-uid').value.trim();
+  const pwd = document.getElementById('l-pwd').value;
+  clearMsgs();
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true;
+  btn.innerHTML = 'Logging in... <span class="spin-sm"></span>';
+  const data = await api({action: 'login', uid, pwd});
+  btn.disabled = false;
+  btn.textContent = 'Login';
+  if (!data) return;
+  if (data.ok) {
+    loggedUID = uid;
+    localPwd  = pwd;
+    hide('pg-login');
+    document.getElementById('pg-login').classList.remove('on');
+    const dash = document.getElementById('pg-dash');
+    dash.classList.add('on');
+    dash.style.display = 'flex';
+    document.getElementById('u-name-disp').textContent = uid;
+    document.getElementById('uav-txt').textContent     = uid[0].toUpperCase();
+    updateAll();
+    initCarousel();
+    updateDate();
+    loadHistory();
+  } else {
+    showErr('l-err', data.msg || 'Invalid credentials');
+    document.getElementById('l-err').style.display = 'block';
+  }
+}
+['l-uid','l-pwd'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+});
+
+function doLogout() {
+  document.getElementById('pg-dash').classList.remove('on');
+  document.getElementById('pg-dash').style.display = 'none';
+  document.getElementById('pg-login').style.display = 'flex';
+  document.getElementById('pg-login').classList.add('on');
+  goStep('s-login');
+}
+
+async function sendOTP() {
+  const email = document.getElementById('f-email').value.trim().toLowerCase();
+  clearMsgs();
+  const btn = document.getElementById('otp-send-btn');
+  btn.disabled = true;
+  btn.innerHTML = 'Sending... <span class="spin-sm"></span>';
+  const data = await api({action: 'sendOTP', email});
+  btn.disabled = false;
+  btn.textContent = 'Send OTP';
+  if (!data) return;
+  if (data.ok) {
+    document.getElementById('otp-em').textContent = email;
+    document.getElementById('f-ok').style.display = 'block';
+    setTimeout(() => goStep('s-otp'), 1600);
+  } else {
+    showErr('f-err', data.msg);
+  }
+}
+
+function onxt(cur, nextId) {
+  cur.value = cur.value.replace(/[^0-9]/g, '');
+  if (cur.value && nextId) document.getElementById(nextId).focus();
+}
+
+async function verOTP() {
+  const otp = ['o1','o2','o3','o4'].map(i => document.getElementById(i).value).join('');
+  clearMsgs();
+  const data = await api({action: 'verifyOTP', otp});
+  if (!data) return;
+  data.ok ? goStep('s-newpass') : showErr('o-err', data.msg);
+}
+
+async function savePass() {
+  clearMsgs();
+  const uid  = document.getElementById('n-uid').value.trim();
+  const pwd  = document.getElementById('n-pwd').value;
+  const cpwd = document.getElementById('n-cpwd').value;
+  if (!uid)          { showErr('n-err', 'User ID required'); return; }
+  if (pwd.length < 6){ showErr('n-err', 'Password min 6 chars'); return; }
+  if (pwd !== cpwd)  { showErr('n-err', 'Passwords do not match'); return; }
+  const data = await api({action: 'updateCreds', uid, pwd});
+  if (!data) return;
+  if (data.ok) {
+    document.getElementById('n-ok').style.display = 'block';
+    setTimeout(() => { goStep('s-login'); document.getElementById('l-uid').value = uid; }, 1800);
+  } else {
+    showErr('n-err', data.msg);
+  }
+}
+
+// ============================================================
+// SIDEBAR & NAV
+// ============================================================
+function toggleSB() {
+  document.getElementById('sidebar').classList.toggle('on');
+  document.getElementById('overlay').classList.toggle('on');
+}
+function closeSB() {
+  document.getElementById('sidebar').classList.remove('on');
+  document.getElementById('overlay').classList.remove('on');
+}
+function navTo(el, secId) {
+  document.querySelectorAll('.nav-i').forEach(n => n.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('on'));
+  document.getElementById(secId).classList.add('on');
+  closeSB();
+  if (secId === 'sec-products')  renderProducts();
+  if (secId === 'sec-reduce')    loadReduceDropdown();
+  if (secId === 'sec-sell')      { renderSellDropdown(); loadSales(); }
+  if (secId === 'sec-report')    renderReport();
+  if (secId === 'sec-low')       renderLow();
+  if (secId === 'sec-history')   loadHistory();
+}
+
+// ============================================================
+// CAROUSEL
+// ============================================================
+let carIdx = 0;
+function initCarousel() {
+  const slides = document.querySelectorAll('.carousel-slide');
+  if (!slides.length) return;
+  setInterval(() => {
+    carIdx = (carIdx + 1) % slides.length;
+    document.getElementById('carousel').style.transform = 'translateX(-' + (carIdx * 100) + '%)';
+  }, 4000);
+}
+
+function updateDate() {
+  const d  = new Date();
+  document.getElementById('hdr-date').textContent =
+    d.toLocaleDateString('en-IN', {weekday:'short', day:'numeric', month:'short'});
+  const hr = d.getHours();
+  const g  = hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('dash-greet').textContent = g + ', ' + loggedUID + '! Here\'s your store overview.';
+}
+
+// ============================================================
+// KPIs
+// ============================================================
+function updateAll() {
+  const total   = products.reduce((a, p) => a + p.qty, 0);
+  const inStock = products.filter(p => p.qty > lowThresh).length;
+  const lowOut  = products.filter(p => p.qty <= lowThresh).length;
+  document.getElementById('kpi-types').textContent = products.length;
+  document.getElementById('kpi-total').textContent = total;
+  document.getElementById('kpi-in').textContent    = inStock;
+  document.getElementById('kpi-low').textContent   = lowOut;
+  document.getElementById('nb-prod').textContent   = products.length;
+  document.getElementById('nb-low').textContent    = lowOut;
+  renderDashChart();
+}
+
+function renderDashChart() {
+  const cats   = {};
+  products.forEach(p => { cats[p.cat] = (cats[p.cat] || 0) + p.qty; });
+  const keys   = Object.keys(cats);
+  const max    = Math.max(...Object.values(cats), 1);
+  const colors = ['#E63946','#D4A017','#22C55E','#3B82F6','#A855F7'];
+  document.getElementById('dash-chart').innerHTML = keys.map((k, i) => {
+    const h = Math.max(10, Math.round((cats[k] / max) * 96));
+    return '<div class="bar" style="background:' + colors[i%colors.length] + ';height:' + h + 'px">' +
+      '<span class="bar-val" style="color:' + colors[i%colors.length] + '">' + cats[k] + '</span>' +
+      '<span>' + k + '</span></div>';
+  }).join('');
+  document.getElementById('dash-legend').innerHTML = keys.map((k, i) =>
+    '<div class="legend-item"><div class="legend-dot" style="background:' + colors[i%colors.length] + '"></div>' + k + '</div>'
+  ).join('');
+}
+
+// ============================================================
+// PRODUCTS TABLE
+// ============================================================
+function renderProducts() {
+  const q  = document.getElementById('prod-search').value.toLowerCase();
+  const cf = document.getElementById('prod-cat-f').value;
+  const list = products.filter(p => {
+    const mQ = !q || p.name.toLowerCase().includes(q) || (p.num||'').toLowerCase().includes(q);
+    const mC = !cf || p.cat === cf;
+    return mQ && mC;
+  });
+  const tbody = document.getElementById('prod-tbody');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:2rem">No products found</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map((p, i) => {
+    const st = p.qty === 0 ? 'out' : p.qty <= lowThresh ? 'low' : 'ok';
+    const sl = p.qty === 0 ? 'Out' : p.qty <= lowThresh ? 'Low' : 'OK';
+    return '<tr>' +
+      '<td style="color:var(--text3);font-size:12px">' + String(i+1).padStart(2,'0') + '</td>' +
+      '<td style="font-weight:500">' + p.name + '</td>' +
+      '<td><span class="cat-tag">' + (p.num||'') + '</span></td>' +
+      '<td><span class="cat-tag">' + p.cat + '</span></td>' +
+      '<td style="font-family:\'Syne\',sans-serif;font-size:16px;font-weight:700">' + p.qty + '</td>' +
+      '<td><div class="sz-detail">' + fmtSizeChips(p.sizes) + '</div></td>' +
+      '<td><span class="pill ' + st + '"><span class="dot ' + st + '"></span>' + sl + '</span></td>' +
+      '<td>' + curSym + p.price + '</td>' +
+      '<td><button class="btn btn-ghost btn-xs" onclick="goReduceProduct(\'' + p.id + '\')">Edit</button></td>' +
+    '</tr>';
+  }).join('');
+}
+
+function fmtSizeChips(sizes) {
+  if (!sizes || typeof sizes !== 'object') return '—';
+  const entries = Object.entries(sizes).filter(([,v]) => Number(v) > 0);
+  if (!entries.length) return '—';
+  return entries.map(([k, v]) =>
+    '<span class="sz-chip">' + k.replace('Size ','Sz') + ':' + v + '</span>'
+  ).join('');
+}
+
+function goReduceProduct(id) {
+  navTo(document.querySelectorAll('.nav-i')[3], 'sec-reduce');
+  setTimeout(() => {
+    document.getElementById('red-prod-sel').value = id;
+    loadReduceSizes();
+  }, 80);
+}
+
+// ============================================================
+// SIZE MAP — Baby Sizes Logic
+// ============================================================
+const sizeMapStd = {
+  'Chappal':      ['Size 5','Size 6','Size 7','Size 8','Size 9','Size 10','Size 11'],
+  'Shoes':        ['Size 5','Size 6','Size 7','Size 8','Size 9','Size 10','Size 11'],
+  'Sandal':       ['Size 4','Size 5','Size 6','Size 7','Size 8','Size 9','Size 10'],
+  'Cap':          ['Free Size'],
+  'Belt':         ['28"','30"','32"','34"','36"','38"','40"'],
+  'School Bag':   ['Small','Medium','Large'],
+  'Travel Bag':   ['Small','Medium','Large'],
+  'Umbrella':     ['Free Size'],
+  'Handkerchief': ['Free Size'],
+  'Water Bottle': ['500ml','750ml','1L'],
+  'Floor Mat':    ['Small','Medium','Large'],
+  'Mug':          ['Small','Large'],
+  'Jug':          ['1L','2L'],
+  'Other':        ['Free Size']
+};
+const BABY_SIZES = ['Size 1','Size 2','Size 3','Size 4','Free Size'];
+const BABY_CATS  = ['Boy Baby','Girl Baby'];
+
+function getSizes(cat, type) {
+  if (BABY_CATS.includes(cat)) return BABY_SIZES;
+  return sizeMapStd[type] || ['Free Size'];
+}
+
+function selCat(el, name) {
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  selCatName = name;
+  updateSizes();
+}
+
+// ============================================================
+// ADD STOCK — OTHER TYPE HANDLING
+// ============================================================
+function onTypeChange() {
+  const type = document.getElementById('add-prod-type').value;
+  const wrap = document.getElementById('custom-type-wrap');
+  wrap.style.display = type === 'Other' ? 'block' : 'none';
+  if (type === 'Other') {
+    document.getElementById('custom-type-inp').focus();
+  }
+  updateSizes();
+}
+
+function getEffectiveType() {
+  const sel = document.getElementById('add-prod-type').value;
+  if (sel === 'Other') {
+    return document.getElementById('custom-type-inp').value.trim() || 'Other';
+  }
+  return sel;
+}
+
+function updateSizes() {
+  const type  = document.getElementById('add-prod-type').value;
+  const sizes = getSizes(selCatName, type === 'Other' ? 'Other' : type);
+  document.getElementById('size-grid').innerHTML = sizes.map(s =>
+    '<div class="size-item"><label>' + s + '</label>' +
+    '<input type="number" min="0" value="0" data-size="' + s + '" oninput="checkQtyMatch()"></div>'
+  ).join('');
+  checkQtyMatch();
+}
+
+function checkQtyMatch() {
+  const total  = parseInt(document.getElementById('a-total-qty').value) || 0;
+  const inputs = [...document.querySelectorAll('#size-grid input')];
+  const sum    = inputs.reduce((a, i) => a + (parseInt(i.value) || 0), 0);
+  const msg    = document.getElementById('qty-match-msg');
+  if (!total && !sum) { msg.style.display = 'none'; return; }
+  msg.style.display = 'block';
+  if (sum === total) {
+    msg.className = 'qty-match ok';
+    msg.textContent = 'Quantities match! Total: ' + sum;
+  } else {
+    msg.className = 'qty-match err';
+    msg.textContent = 'Mismatch — sizes: ' + sum + ' vs total: ' + total;
+  }
+}
+
+async function addStock() {
+  const name  = document.getElementById('a-name').value.trim();
+  const num   = document.getElementById('a-num').value.trim();
+  const price = parseFloat(document.getElementById('a-price').value) || 0;
+  const note  = document.getElementById('a-quality').value.trim();
+  const total = parseInt(document.getElementById('a-total-qty').value) || 0;
+  const type  = getEffectiveType();
+
+  if (!name || !num || !total) { toast('!', 'Fill required fields', 'Name, Number & Qty needed'); return; }
+  if (!type) { toast('!', 'Select product type'); return; }
+
+  const inputs = [...document.querySelectorAll('#size-grid input')];
+  const sum    = inputs.reduce((a, i) => a + (parseInt(i.value) || 0), 0);
+  if (sum !== total) { toast('!', 'Qty mismatch', 'Sizes sum ' + sum + ' ≠ total ' + total); return; }
+
+  const sizes = {};
+  inputs.forEach(i => { sizes[i.dataset.size] = parseInt(i.value) || 0; });
+
+  const btn = document.getElementById('add-btn');
+  btn.disabled = true;
+  btn.innerHTML = 'Saving... <span class="spin-sm"></span>';
+
+  const data = await api({action:'addProduct', name, num, cat:selCatName, type, price, qty:total, sizes:JSON.stringify(sizes), note});
+
+  btn.disabled = false;
+  btn.textContent = 'Add to Inventory';
+
+  if (!data) return;
+  if (data.ok) {
+    toast('OK', name + ' saved', data.msg);
+    const init = await api({action:'init'});
+    if (init && init.ok) { products = init.products.map(normaliseProduct); updateAll(); }
+    ['a-name','a-num','a-price','a-quality','a-total-qty'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('custom-type-inp').value = '';
+    document.getElementById('add-prod-type').value = '';
+    document.getElementById('custom-type-wrap').style.display = 'none';
+    updateSizes();
+  } else {
+    toast('!', 'Error', data.msg);
+  }
+}
+
+// ============================================================
+// REDUCE STOCK
+// ============================================================
+function loadReduceDropdown() {
+  const sel = document.getElementById('red-prod-sel');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- Select Product --</option>' +
+    products.map(p => '<option value="' + p.id + '">' + p.name + ' (' + (p.num||'') + ') — Qty:' + p.qty + '</option>').join('');
+  if (cur) { sel.value = cur; loadReduceSizes(); }
+  else document.getElementById('red-sizes-wrap').style.display = 'none';
+}
+
+function loadReduceSizes() {
+  const id   = document.getElementById('red-prod-sel').value;
+  const wrap = document.getElementById('red-sizes-wrap');
+  if (!id) { wrap.style.display = 'none'; return; }
+  const p = products.find(x => String(x.id) === String(id));
+  if (!p) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  const sizes   = p.sizes || {};
+  const entries = Object.entries(sizes);
+  if (!entries.length) {
+    document.getElementById('red-sizes-list').innerHTML = '<p style="color:var(--text3);font-size:13px;padding:.5rem 0">No size data.</p>';
+    return;
+  }
+  document.getElementById('red-sizes-list').innerHTML = entries.map(([sz, qty]) =>
+    '<div class="sz-reduce-row">' +
+      '<span class="sz-label">' + sz + '</span>' +
+      '<span class="sz-current">Stock: ' + qty + '</span>' +
+      '<input class="sz-inp" type="number" min="0" max="' + qty + '" value="0" id="red-sz-' + sz.replace(/[^a-zA-Z0-9]/g,'_') + '" placeholder="Reduce by">' +
+    '</div>'
+  ).join('');
+}
+
+async function applyReduce() {
+  const id = document.getElementById('red-prod-sel').value;
+  if (!id) return;
+  const p      = products.find(x => String(x.id) === String(id));
+  if (!p) return;
+  const reason = document.getElementById('red-reason').value || 'Manual correction';
+  const sizes  = p.sizes || {};
+  let changed  = false;
+  const btn    = document.getElementById('red-apply-btn');
+  btn.disabled = true;
+  btn.innerHTML = 'Saving... <span class="spin-sm"></span>';
+
+  for (const [sz] of Object.entries(sizes)) {
+    const inputId  = 'red-sz-' + sz.replace(/[^a-zA-Z0-9]/g,'_');
+    const el       = document.getElementById(inputId);
+    if (!el) continue;
+    const reduceBy = parseInt(el.value) || 0;
+    if (reduceBy <= 0) continue;
+    changed = true;
+    const data = await api({action:'reduceStock', id:p.id, sizeName:sz, reduceBy, reason});
+    if (data && data.ok) { p.qty = data.qty; p.sizes = data.sizes; }
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Apply Reduction';
+
+  if (changed) {
+    toast('OK', p.name + ' updated', 'Stock reduced');
+    updateAll();
+    loadReduceDropdown();
+  } else {
+    toast('!', 'No changes', 'Enter qty to reduce');
+  }
+}
+
+async function deleteProduct() {
+  const id = document.getElementById('red-prod-sel').value;
+  if (!id) return;
+  const p = products.find(x => String(x.id) === String(id));
+  if (!p) return;
+
+  const ok = await confirm2(
+    'Delete ' + p.name + '?',
+    'This removes the product from inventory. Past sales records are kept.',
+    'Delete Product'
+  );
+  if (!ok) return;
+
+  const btn = document.getElementById('red-delete-btn');
+  btn.disabled = true;
+  btn.innerHTML = 'Deleting... <span class="spin-sm"></span>';
+  const data = await api({action:'deleteProduct', id: p.id});
+  btn.disabled = false;
+  btn.innerHTML = '&#128465; Delete Product';
+
+  if (!data) return;
+  if (data.ok) {
+    products = products.filter(x => String(x.id) !== String(id));
+    updateAll();
+    loadReduceDropdown();
+    renderSellDropdown();
+    toast('OK', p.name + ' deleted', 'Sales records intact');
+  } else {
+    toast('!', 'Error', data.msg);
+  }
+}
+
+// ============================================================
+// SELL STOCK
+// ============================================================
+function renderSellDropdown() {
+  const sel = document.getElementById('sell-prod');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- Select Product --</option>' +
+    products.filter(p => p.qty > 0).map(p =>
+      '<option value="' + p.id + '">' + p.name + ' (' + (p.num||'') + ') Qty:' + p.qty + '</option>'
+    ).join('');
+  if (cur) sel.value = cur;
+  sellProdChanged();
+}
+
+function sellProdChanged() {
+  const id    = document.getElementById('sell-prod').value;
+  const szSel = document.getElementById('sell-size');
+  szSel.innerHTML = '<option value="">-- Select Size --</option>';
+  if (!id) { document.getElementById('sell-calc').style.display = 'none'; return; }
+  const p = products.find(x => String(x.id) === String(id));
+  if (!p) return;
+  Object.entries(p.sizes || {}).filter(([,v]) => Number(v) > 0).forEach(([sz, qty]) => {
+    const opt = document.createElement('option');
+    opt.value = sz;
+    opt.textContent = sz + ' (Stock: ' + qty + ')';
+    szSel.appendChild(opt);
+  });
+  calcProfit();
+}
+
+function calcProfit() {
+  const id  = document.getElementById('sell-prod').value;
+  const sp  = parseFloat(document.getElementById('sell-price').value) || 0;
+  const qty = parseInt(document.getElementById('sell-qty').value) || 1;
+  const calc = document.getElementById('sell-calc');
+  if (!id || !sp) { calc.style.display = 'none'; return; }
+  const p = products.find(x => String(x.id) === String(id));
+  if (!p) return;
+  calc.style.display = 'block';
+  const net   = sp - p.price;
+  const total = net * qty;
+  const pct   = p.price > 0 ? ((net / p.price) * 100).toFixed(1) : 0;
+  document.getElementById('sc-actual').textContent = curSym + p.price;
+  document.getElementById('sc-sell').textContent   = curSym + sp;
+  const nc = net >= 0 ? 'profit-pos' : 'profit-neg';
+  ['sc-net','sc-total','sc-pct'].forEach(id2 => document.getElementById(id2).className = 'profit-val ' + nc);
+  document.getElementById('sc-net').textContent   = (net   >= 0 ? '+' : '') + curSym + net.toFixed(2);
+  document.getElementById('sc-total').textContent = (total >= 0 ? '+' : '') + curSym + total.toFixed(2);
+  document.getElementById('sc-pct').textContent   = (pct   >= 0 ? '+' : '') + pct + '%';
+}
+
+async function doSell() {
+  const id       = document.getElementById('sell-prod').value;
+  const sizeName = document.getElementById('sell-size').value;
+  const sp       = parseFloat(document.getElementById('sell-price').value) || 0;
+  const qty      = parseInt(document.getElementById('sell-qty').value) || 1;
+  const errEl    = document.getElementById('sell-err');
+  errEl.style.display = 'none';
+
+  if (!id)       { errEl.textContent = 'Select a product.';   errEl.style.display = 'block'; return; }
+  if (!sizeName) { errEl.textContent = 'Select a size.';      errEl.style.display = 'block'; return; }
+  if (!sp)       { errEl.textContent = 'Enter selling price.'; errEl.style.display = 'block'; return; }
+
+  const p         = products.find(x => String(x.id) === String(id));
+  if (!p) return;
+  const sizeStock = ((p.sizes || {})[sizeName]) || 0;
+  if (qty > sizeStock) {
+    errEl.textContent = 'Only ' + sizeStock + ' left for ' + sizeName + '.';
+    errEl.style.display = 'block'; return;
+  }
+
+  const btn = document.getElementById('sell-btn');
+  btn.disabled = true;
+  btn.innerHTML = 'Processing... <span class="spin-sm"></span>';
+  const data = await api({action:'sellStock', prodId:p.id, sizeName, qty, sell:sp});
+  btn.disabled = false;
+  btn.textContent = 'Sell Product';
+
+  if (!data) return;
+  if (data.ok) {
+    p.qty   = data.newQty;
+    p.sizes = data.sizes;
+    toast('OK', 'Sold ' + qty + 'x ' + p.name, 'P/L: ' + (data.profit >= 0 ? '+' : '') + curSym + Number(data.profit).toFixed(2));
+    updateAll();
+    renderSellDropdown();
+    await loadSales();
+    ['sell-price','sell-qty'].forEach(i => document.getElementById(i).value = i === 'sell-qty' ? '1' : '');
+    document.getElementById('sell-prod').value = '';
+    document.getElementById('sell-size').innerHTML = '<option value="">-- Select Size --</option>';
+    document.getElementById('sell-calc').style.display = 'none';
+  } else {
+    errEl.textContent = data.msg;
+    errEl.style.display = 'block';
+  }
+}
+
+// ============================================================
+// UNDO SALE
+// ============================================================
+async function undoSale(saleId, prodName) {
+  const ok = await confirm2(
+    'Undo this sale?',
+    prodName + ' — Stock will be restored automatically.',
+    'Undo Sale'
+  );
+  if (!ok) return;
+  const data = await api({action:'undoSale', saleId});
+  if (!data) return;
+  if (data.ok) {
+    toast('OK', 'Sale undone', 'Stock restored');
+    const init = await api({action:'init'});
+    if (init && init.ok) { products = init.products.map(normaliseProduct); updateAll(); }
+    await loadSales();
+  } else {
+    toast('!', 'Error', data.msg);
+  }
+}
+
+// ============================================================
+// SALES
+// ============================================================
+async function loadSales() {
+  const data = await api({action:'getSales'});
+  if (data && data.ok) { allSales = data.sales; renderSales(); }
+}
+
+function filterSales(mode) {
+  salesFilter = mode;
+  ['today','all'].forEach(m => {
+    const el = document.getElementById('sb-' + m);
+    if (el) el.style.cssText = m === mode ? 'background:rgba(230,57,70,.15);color:var(--brand)' : '';
+  });
+  renderSales();
+}
+
+function renderSales() {
+  const today = new Date().toDateString();
+  let list    = allSales;
+  if (salesFilter === 'today')
+    list = allSales.filter(s => new Date(s.ts).toDateString() === today);
+  else if (salesFilter === 'range') {
+    const from = document.getElementById('sell-date-from').value;
+    const to   = document.getElementById('sell-date-to').value;
+    if (from && to) {
+      const fd = new Date(from);
+      const td = new Date(to); td.setHours(23,59,59);
+      list = allSales.filter(s => { const d = new Date(s.ts); return d >= fd && d <= td; });
+    }
+  }
+  const tbody = document.getElementById('sales-tbody');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:2rem">No sales found</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(s => {
+    const nc = s.profit >= 0 ? '#86EFAC' : '#FCA5A5';
+    return '<tr>' +
+      '<td style="font-size:12px;color:var(--text2)">' + fmtTime(s.ts) + '</td>' +
+      '<td style="font-weight:500">' + s.prod + '</td>' +
+      '<td><span class="cat-tag">' + (s.sizeName || '—') + '</span></td>' +
+      '<td>' + s.qty + '</td>' +
+      '<td>' + curSym + s.sell + '</td>' +
+      '<td style="color:' + nc + ';font-weight:600">' + (s.profit >= 0 ? '+' : '') + curSym + Number(s.profit).toFixed(2) + '</td>' +
+      '<td style="color:' + nc + '">' + (s.pct >= 0 ? '+' : '') + s.pct + '%</td>' +
+      '<td><button class="btn btn-danger btn-xs" onclick="undoSale(\'' + s.id + '\',\'' + s.prod.replace(/'/g,"\\'") + '\')">Undo</button></td>' +
+    '</tr>';
+  }).join('');
+}
+
+// ============================================================
+// REPORT
+// ============================================================
+let repCat = 'all';
+function repTab(el, cat) {
+  document.querySelectorAll('.rtab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  repCat = cat;
+  renderReport();
+}
+
+function renderReport() {
+  const list   = repCat === 'all' ? products : products.filter(p => p.cat === repCat);
+  const colors = ['#E63946','#D4A017','#22C55E','#3B82F6','#A855F7','#06B6D4','#F97316'];
+  const max    = Math.max(...list.map(p => p.qty), 1);
+
+  // Bar chart
+  document.getElementById('rep-chart').innerHTML = list.slice(0, 10).map((p, i) => {
+    const h = Math.max(8, Math.round((p.qty / max) * 96));
+    return '<div class="bar" style="background:' + colors[i%colors.length] + ';height:' + h + 'px">' +
+      '<span class="bar-val" style="color:' + colors[i%colors.length] + '">' + p.qty + '</span>' +
+      '<span>' + p.name.split(' ')[0] + '</span></div>';
+  }).join('');
+
+  // Pie chart
+  renderPieChart();
+
+  // Table
+  document.getElementById('rep-tbody').innerHTML = list.map(p => {
+    const st  = p.qty === 0 ? 'out' : p.qty <= lowThresh ? 'low' : 'ok';
+    const val = p.qty * p.price;
+    return '<tr>' +
+      '<td style="font-weight:500">' + p.name + '</td>' +
+      '<td><span class="cat-tag">' + (p.num||'') + '</span></td>' +
+      '<td><span class="cat-tag">' + p.cat + '</span></td>' +
+      '<td>' + curSym + p.price + '</td>' +
+      '<td style="font-family:\'Syne\',sans-serif;font-weight:700">' + p.qty + '</td>' +
+      '<td><div class="sz-detail">' + fmtSizeChips(p.sizes) + '</div></td>' +
+      '<td style="font-weight:600;color:var(--brand2)">' + curSym + val.toLocaleString() + '</td>' +
+      '<td><span class="pill ' + st + '"><span class="dot ' + st + '"></span>' + (st==='ok'?'OK':st==='low'?'Low':'Out') + '</span></td>' +
+    '</tr>';
+  }).join('');
+}
+
+function renderPieChart() {
+  const cats   = {};
+  const list   = repCat === 'all' ? products : products.filter(p => p.cat === repCat);
+  list.forEach(p => { cats[p.cat] = (cats[p.cat] || 0) + p.qty; });
+  const labels = Object.keys(cats);
+  const values = Object.values(cats);
+  const colors = ['#E63946','#D4A017','#22C55E','#3B82F6','#A855F7'];
+
+  if (pieChartInst) { pieChartInst.destroy(); pieChartInst = null; }
+
+  const ctx = document.getElementById('pie-chart').getContext('2d');
+  pieChartInst = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        backgroundColor: colors.slice(0, labels.length),
+        borderColor: '#0A0A12',
+        borderWidth: 3,
+        hoverOffset: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx2 => ' ' + ctx2.label + ': ' + ctx2.parsed + ' units'
+          }
+        }
+      }
+    }
+  });
+
+  document.getElementById('pie-legend').innerHTML = labels.map((l, i) =>
+    '<div class="legend-item"><div class="legend-dot" style="background:' + colors[i%colors.length] + '"></div>' + l + ' (' + values[i] + ')</div>'
+  ).join('');
+}
+
+function dlCSV() {
+  const list = repCat === 'all' ? products : products.filter(p => p.cat === repCat);
+  const rows = [['Product Name','Model Number','Category','Type','Actual Price','Total Units','Size Details','Total Valuation','Status']];
+  list.forEach(p => {
+    const st    = p.qty === 0 ? 'Out' : p.qty <= lowThresh ? 'Low' : 'In Stock';
+    const szStr = Object.entries(p.sizes || {}).map(([k,v]) => k+':'+v).join(' | ');
+    rows.push([p.name, p.num||'', p.cat, p.type||'', p.price, p.qty, szStr, p.qty * p.price, st]);
+  });
+  const csv  = rows.map(r => r.map(v => '"' + String(v).replace(/"/g,'""') + '"').join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = 'MMR_Stock_Report_' + (repCat === 'all' ? 'All' : repCat.replace(/ /g,'_')) + '_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  toast('OK', 'CSV Downloaded', a.download);
+}
+
+function dlPDF() {
+  window.print();
+  toast('OK', 'Print dialog opened', 'Save as PDF');
+}
+
+// ============================================================
+// LOW STOCK
+// ============================================================
+function renderLow() {
+  const list  = products.filter(p => p.qty <= lowThresh);
+  const tbody = document.getElementById('low-tbody');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#86EFAC;padding:2rem">All products are well stocked!</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(p => {
+    const st = p.qty === 0 ? 'out' : 'low';
+    return '<tr>' +
+      '<td style="font-weight:500">' + p.name + '</td>' +
+      '<td><span class="cat-tag">' + (p.num||'') + '</span></td>' +
+      '<td><span class="cat-tag">' + p.cat + '</span></td>' +
+      '<td style="font-family:\'Syne\',sans-serif;font-weight:700;color:' + (p.qty===0?'var(--red)':'var(--yellow)') + '">' + p.qty + '</td>' +
+      '<td><span class="pill ' + st + '"><span class="dot ' + st + '"></span>' + (p.qty===0?'Out of Stock':'Low Stock') + '</span></td>' +
+      '<td><button class="btn btn-primary btn-xs" onclick="navTo(document.querySelectorAll(\'.nav-i\')[2],\'sec-addstock\')">Restock</button></td>' +
+    '</tr>';
+  }).join('');
+}
+
+// ============================================================
+// HISTORY
+// ============================================================
+async function loadHistory() {
+  const data = await api({action:'getHistory'});
+  if (data && data.ok) {
+    allHistory = data.history;
+    renderHistory();
+    renderDashRecent();
+  }
+}
+
+function renderHistory() {
+  const q    = (document.getElementById('hist-search').value || '').toLowerCase();
+  const list = allHistory.filter(h => !q || (h.desc||'').toLowerCase().includes(q));
+  const cont = document.getElementById('hist-list');
+  if (!list.length) {
+    cont.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text3)">No history found</div>';
+    return;
+  }
+  cont.innerHTML = list.map(h =>
+    '<div class="history-item">' +
+      '<div class="h-icon ' + (h.type||'login') + '">' + (h.icon||'?') + '</div>' +
+      '<div style="flex:1;min-width:0"><div class="h-desc">' + (h.desc||'') + '</div><div class="h-time">' + fmtTime(h.ts) + '</div></div>' +
+    '</div>'
+  ).join('');
+}
+
+function renderDashRecent() {
+  const list = allHistory.slice(0, 5);
+  const cont = document.getElementById('dash-recent-list');
+  if (!list.length) {
+    cont.innerHTML = '<div style="padding:1.5rem;text-align:center;color:var(--text3);font-size:13px">No recent activity</div>';
+    return;
+  }
+  cont.innerHTML = list.map(h =>
+    '<div class="history-item">' +
+      '<div class="h-icon ' + (h.type||'login') + '">' + (h.icon||'?') + '</div>' +
+      '<div style="flex:1;min-width:0"><div class="h-desc">' + (h.desc||'') + '</div><div class="h-time">' + fmtTime(h.ts) + '</div></div>' +
+    '</div>'
+  ).join('');
+}
+
+// ============================================================
+// SETTINGS
+// ============================================================
+function saveApiUrl() {
+  const url = document.getElementById('set-api-url').value.trim();
+  if (!url.startsWith('https://')) { toast('!', 'Invalid URL'); return; }
+  localStorage.setItem('mmr_api_url', url);
+  API_URL = url;
+  toast('OK', 'URL saved', 'Reloading...');
+  setTimeout(() => location.reload(), 1200);
+}
+
+function saveSettings() {
+  lowThresh = parseInt(document.getElementById('low-thresh').value) || 5;
+  curSym    = document.getElementById('currency-sym').value;
+  localStorage.setItem('mmr_thresh', lowThresh);
+  localStorage.setItem('mmr_sym',    curSym);
+  updateAll();
+  toast('OK', 'Settings saved');
+}
+
+async function changePwd() {
+  const cur = document.getElementById('set-cur-pwd').value;
+  const nw  = document.getElementById('set-new-pwd').value;
+  const se  = document.getElementById('set-err');
+  const so  = document.getElementById('set-ok');
+  se.style.display = 'none';
+  so.style.display = 'none';
+  if (cur !== localPwd) { se.textContent = 'Current password incorrect.'; se.style.display = 'block'; return; }
+  if (nw.length < 6)    { se.textContent = 'Min 6 characters.'; se.style.display = 'block'; return; }
+  const data = await api({action:'updateCreds', uid:loggedUID, pwd:nw});
+  if (data && data.ok) {
+    localPwd = nw;
+    so.textContent = 'Password updated!';
+    so.style.display = 'block';
+    document.getElementById('set-cur-pwd').value = '';
+    document.getElementById('set-new-pwd').value = '';
+  } else {
+    se.textContent = (data && data.msg) || 'Error';
+    se.style.display = 'block';
+  }
+}
+
+// ============================================================
+// TOAST & UTILS
+// ============================================================
+let toastTimer;
+function toast(icon, msg, sub) {
+  clearTimeout(toastTimer);
+  document.getElementById('t-icon').textContent = icon;
+  document.getElementById('t-msg').textContent  = msg;
+  document.getElementById('t-sub').textContent  = sub || '';
+  const t = document.getElementById('toast');
+  t.classList.add('on');
+  toastTimer = setTimeout(() => t.classList.remove('on'), 3500);
+}
+
+function fmtTime(ts) {
+  if (!ts) return '';
+  return new Date(ts).toLocaleDateString('en-IN', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+}
+
+// Init
+updateSizes();
+</script>
+</body>
+</html>
+HTMLEOF
+echo "index.html done"
+Output
+
+index.html done
