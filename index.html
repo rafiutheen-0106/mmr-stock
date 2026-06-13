@@ -1,12 +1,9 @@
-bash
-
-cat > /mnt/user-data/outputs/index.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>MMR Footwear — Stock Manager Pro</title>
+<title>MMR Footwear ? Stock Manager Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -26,7 +23,7 @@ html{font-size:15px;-webkit-text-size-adjust:100%}
 body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#0F0F1E}::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:2px}
 
-/* ── LOADING ── */
+/* -- LOADING -- */
 #loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;
   align-items:center;justify-content:center;z-index:9999;gap:1rem}
 #loading-screen .spin{width:44px;height:44px;border:3px solid var(--border2);
@@ -34,7 +31,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 @keyframes spin{to{transform:rotate(360deg)}}
 #loading-screen p{font-size:13px;color:var(--text2)}
 
-/* ── CONFIG MODAL ── */
+/* -- CONFIG MODAL -- */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.82);
   z-index:9998;align-items:center;justify-content:center;padding:1rem}
 .modal-bg.on{display:flex}
@@ -43,20 +40,20 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 .modal-box h2{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:.4rem}
 .modal-box p{font-size:13px;color:var(--text2);margin-bottom:1.2rem;line-height:1.6}
 
-/* ── CONFIRM MODAL ── */
+/* -- CONFIRM MODAL -- */
 #confirm-modal .modal-box{max-width:360px;text-align:center}
 #confirm-modal h2{font-size:17px;margin-bottom:.6rem}
 #confirm-modal p{margin-bottom:1.4rem}
 .confirm-btns{display:flex;gap:.8rem;justify-content:center}
 
-/* ── PAGES ── */
+/* -- PAGES -- */
 .pg{display:none;min-height:100vh}
 .pg.on{display:block}
 #pg-login{display:flex;align-items:center;justify-content:center;min-height:100vh;
   background:radial-gradient(ellipse at 80% 20%,rgba(230,57,70,.12) 0%,transparent 60%),
              radial-gradient(ellipse at 20% 80%,rgba(212,160,23,.08) 0%,transparent 60%),var(--bg)}
 
-/* ── LOGIN ── */
+/* -- LOGIN -- */
 .login-wrap{width:100%;max-width:420px;padding:1rem}
 .login-box{background:rgba(255,255,255,.03);border:1px solid var(--border2);
   backdrop-filter:blur(20px);border-radius:24px;padding:2.5rem 2rem;
@@ -110,11 +107,11 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
   color:var(--text);font-family:'Syne',sans-serif;outline:none;transition:var(--t)}
 .otp-box:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-glow)}
 
-/* ── DASHBOARD SHELL ── */
+/* -- DASHBOARD SHELL -- */
 #pg-dash{display:none;flex-direction:column;height:100vh;overflow:hidden}
 #pg-dash.on{display:flex}
 
-/* ── HEADER ── */
+/* -- HEADER -- */
 .hdr{height:var(--header);background:rgba(10,10,18,.9);backdrop-filter:blur(16px);
   border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1rem;
   gap:.8rem;position:sticky;top:0;z-index:100;flex-shrink:0}
@@ -150,12 +147,12 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
   cursor:pointer;font-family:'Outfit',sans-serif;transition:var(--t);white-space:nowrap}
 .logout-btn:hover{background:rgba(239,68,68,.2)}
 
-/* ── BODY ── */
+/* -- BODY -- */
 .dash-body{display:flex;flex:1;overflow:hidden}
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:90}
 .overlay.on{display:block}
 
-/* ── SIDEBAR ── */
+/* -- SIDEBAR -- */
 .sidebar{width:var(--sidebar);background:rgba(8,8,16,.98);border-right:1px solid var(--border);
   display:flex;flex-direction:column;padding:1rem 0;flex-shrink:0;overflow-y:auto;
   transition:transform .28s cubic-bezier(.4,0,.2,1)}
@@ -173,14 +170,14 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 .sb-foot{margin-top:auto;padding:1rem;border-top:1px solid var(--border)}
 .sb-foot p{font-size:10px;color:var(--text3);line-height:1.6}
 
-/* ── MAIN CONTENT ── */
+/* -- MAIN CONTENT -- */
 .main{flex:1;overflow-y:auto;padding:1.5rem;background:var(--bg)}
 .section{display:none}
 .section.on{display:block}
 .pg-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:3px}
 .pg-sub{font-size:12.5px;color:var(--text2);margin-bottom:1.5rem}
 
-/* ── KPI ── */
+/* -- KPI -- */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.5rem}
 .kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
   padding:1rem;position:relative;overflow:hidden;transition:var(--t)}
@@ -192,7 +189,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 .kpi-val{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;line-height:1;margin-bottom:3px}
 .kpi-lbl{font-size:11px;color:var(--text2)}
 
-/* ── TABLES ── */
+/* -- TABLES -- */
 .tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;overflow-x:auto}
 .tbl-hdr{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.1rem;
   border-bottom:1px solid var(--border);gap:.8rem;flex-wrap:wrap}
@@ -222,7 +219,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .sz-detail{font-size:10.5px;color:var(--text3);line-height:1.8;max-width:180px}
 .sz-chip{display:inline-block;background:rgba(255,255,255,.06);border-radius:4px;padding:1px 5px;margin:1px;white-space:nowrap}
 
-/* ── FORMS ── */
+/* -- FORMS -- */
 .form-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem;margin-bottom:1rem}
 .form-card h3{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:1rem;
   padding-bottom:.7rem;border-bottom:1px solid var(--border)}
@@ -249,7 +246,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
   font-family:'Outfit',sans-serif;outline:none;transition:var(--t)}
 .custom-type-wrap input::placeholder{color:var(--text3)}
 
-/* ── REDUCE SIZE ROWS ── */
+/* -- REDUCE SIZE ROWS -- */
 .sz-reduce-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
 .sz-reduce-row:last-child{border-bottom:none}
 .sz-label{font-size:13px;font-weight:500;min-width:80px}
@@ -258,20 +255,20 @@ tr:hover td{background:rgba(255,255,255,.02)}
   border-radius:6px;padding:6px 8px;font-size:13px;color:var(--text);font-family:'Outfit',sans-serif;outline:none}
 .sz-inp:focus{border-color:var(--brand)}
 
-/* ── SELL CALC ── */
+/* -- SELL CALC -- */
 .sell-calc{background:rgba(230,57,70,.06);border:1px solid rgba(230,57,70,.2);
   border-radius:var(--r2);padding:1rem;margin-top:8px;font-size:13px}
 .profit-line{display:flex;justify-content:space-between;align-items:center;margin-top:5px}
 .profit-val{font-family:'Syne',sans-serif;font-size:16px;font-weight:700}
 .profit-pos{color:var(--green)}.profit-neg{color:var(--red)}
 
-/* ── DATE BAR ── */
+/* -- DATE BAR -- */
 .date-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .date-bar input[type="date"]{background:rgba(255,255,255,.05);border:1px solid var(--border2);
   border-radius:var(--r2);padding:7px 10px;font-size:12px;color:var(--text);
   font-family:'Outfit',sans-serif;outline:none}
 
-/* ── CHARTS ── */
+/* -- CHARTS -- */
 .chart-area{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.2rem;margin-bottom:1rem}
 .chart-area h3{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:1rem}
 .bar-chart{display:flex;align-items:flex-end;gap:8px;height:110px;padding-bottom:22px;position:relative;overflow-x:auto}
@@ -286,7 +283,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .charts-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
 .pie-canvas-wrap{position:relative;height:200px;display:flex;align-items:center;justify-content:center}
 
-/* ── REPORT FILTERS ── */
+/* -- REPORT FILTERS -- */
 .report-filter-bar{display:flex;gap:.8rem;flex-wrap:wrap;align-items:center;margin-bottom:1rem;
   background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:.8rem 1rem}
 .rtab-row{display:flex;gap:6px;margin-bottom:1rem;background:rgba(255,255,255,.04);
@@ -295,7 +292,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
   cursor:pointer;transition:var(--t);color:var(--text2)}
 .rtab.on{background:var(--brand);color:#fff}
 
-/* ── HISTORY ── */
+/* -- HISTORY -- */
 .history-item{display:flex;gap:1rem;padding:1rem;border-bottom:1px solid var(--border);align-items:flex-start}
 .h-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;
   justify-content:center;font-size:14px;flex-shrink:0;font-weight:700}
@@ -306,7 +303,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .h-time{font-size:11px;color:var(--text3);margin-top:3px}
 .h-desc{font-size:13px;margin-bottom:2px;word-break:break-word}
 
-/* ── TOAST ── */
+/* -- TOAST -- */
 .toast{position:fixed;bottom:1.2rem;right:1.2rem;z-index:9999;background:var(--surface2);
   border:1px solid var(--border2);border-radius:var(--r);padding:.9rem 1.2rem;
   box-shadow:var(--shadow);display:none;max-width:300px;width:calc(100vw - 2.4rem)}
@@ -315,11 +312,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .toast-body p{font-size:13px;font-weight:500}
 .toast-body span{font-size:11px;color:var(--text2)}
 
-/* ── SPINNER INLINE ── */
+/* -- SPINNER INLINE -- */
 .spin-sm{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.2);
   border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle}
 
-/* ── MOBILE ── */
+/* -- MOBILE -- */
 @media(max-width:900px){
   .charts-row{grid-template-columns:1fr}
 }
@@ -498,10 +495,10 @@ tr:hover td{background:rgba(255,255,255,.02)}
         <div class="pg-title">Dashboard</div>
         <div class="pg-sub" id="dash-greet">Welcome! Loading overview...</div>
         <div class="kpi-grid">
-          <div class="kpi r"><div class="kpi-icon">&#128230;</div><div class="kpi-val" id="kpi-types">—</div><div class="kpi-lbl">Product Types</div></div>
-          <div class="kpi b"><div class="kpi-icon">&#128722;</div><div class="kpi-val" id="kpi-total">—</div><div class="kpi-lbl">Total Stock</div></div>
-          <div class="kpi g"><div class="kpi-icon">&#10004;</div><div class="kpi-val" id="kpi-in">—</div><div class="kpi-lbl">In Stock</div></div>
-          <div class="kpi y"><div class="kpi-icon">&#9888;</div><div class="kpi-val" id="kpi-low">—</div><div class="kpi-lbl">Low / Out</div></div>
+          <div class="kpi r"><div class="kpi-icon">&#128230;</div><div class="kpi-val" id="kpi-types">?</div><div class="kpi-lbl">Product Types</div></div>
+          <div class="kpi b"><div class="kpi-icon">&#128722;</div><div class="kpi-val" id="kpi-total">?</div><div class="kpi-lbl">Total Stock</div></div>
+          <div class="kpi g"><div class="kpi-icon">&#10004;</div><div class="kpi-val" id="kpi-in">?</div><div class="kpi-lbl">In Stock</div></div>
+          <div class="kpi y"><div class="kpi-icon">&#9888;</div><div class="kpi-val" id="kpi-low">?</div><div class="kpi-lbl">Low / Out</div></div>
         </div>
         <div class="chart-area">
           <h3>&#128200; Stock by Category</h3>
@@ -592,10 +589,19 @@ tr:hover td{background:rgba(255,255,255,.02)}
         <div class="form-card">
           <h3>Select Product</h3>
           <div class="fld">
-            <label>Product</label>
-            <select id="red-prod-sel" class="filter-sel" style="width:100%" onchange="loadReduceSizes()">
-              <option value="">-- Select Product --</option>
-            </select>
+            <label>?? Product Number / Name ????</label>
+            <div style="position:relative">
+              <input type="text" id="red-search"
+                style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:var(--r2);padding:10px 14px;font-size:14px;color:var(--text);font-family:Outfit,sans-serif;outline:none;margin-bottom:8px;transition:var(--t)"
+                placeholder="Product number or name type ?????..."
+                oninput="filterReduceDropdown()" autocomplete="off">
+              <div id="red-dropdown-list" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--surface2);border:1px solid var(--border2);border-radius:0 0 var(--r2) var(--r2);z-index:50;max-height:220px;overflow-y:auto;box-shadow:var(--shadow);margin-top:-8px"></div>
+            </div>
+            <input type="hidden" id="red-prod-sel" value="">
+            <div id="red-selected-box" style="display:none;margin-top:4px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:var(--r2);padding:10px 14px;font-size:13px;color:#86EFAC;display:flex;align-items:center;justify-content:space-between">
+              <span id="red-selected-name">?</span>
+              <span onclick="clearRedSearch()" style="cursor:pointer;font-size:16px;color:var(--text2)">?</span>
+            </div>
           </div>
           <div id="red-sizes-wrap" style="display:none">
             <h3 style="margin-top:1rem;margin-bottom:.8rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)">Reduce by Size</h3>
@@ -620,10 +626,20 @@ tr:hover td{background:rgba(255,255,255,.02)}
           <h3>New Sale</h3>
           <div class="form-grid">
             <div class="fld full">
-              <label>Product</label>
-              <select id="sell-prod" class="filter-sel" style="width:100%" onchange="sellProdChanged()">
-                <option value="">-- Select Product --</option>
-              </select>
+              <label>?? Product Number / Name ????</label>
+              <div style="position:relative">
+                <input type="text" id="sell-search"
+                  style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:var(--r2);padding:10px 14px;font-size:14px;color:var(--text);font-family:Outfit,sans-serif;outline:none;transition:var(--t)"
+                  placeholder="Product number or name type ?????... (e.g. 3456, vkc)"
+                  oninput="filterSellDropdown()" autocomplete="off">
+                <div id="sell-dropdown-list" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--surface2);border:1px solid var(--border2);border-radius:0 0 var(--r2) var(--r2);z-index:50;max-height:220px;overflow-y:auto;box-shadow:var(--shadow)"></div>
+              </div>
+              <input type="hidden" id="sell-prod" value="">
+              <div id="sell-selected-box" style="display:none;margin-top:8px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:var(--r2);padding:10px 14px;font-size:13px;color:#86EFAC;display:flex;align-items:center;justify-content:space-between">
+                <span id="sell-selected-name">?</span>
+                <span onclick="clearSellSearch()" style="cursor:pointer;font-size:16px;color:var(--text2)">?</span>
+              </div>
+              <div id="sell-match-info" style="font-size:11px;color:var(--text2);margin-top:5px"></div>
             </div>
             <div class="fld">
               <label>Size</label>
@@ -641,13 +657,13 @@ tr:hover td{background:rgba(255,255,255,.02)}
               <span>Selling: <strong id="sc-sell">Rs.0</strong></span>
             </div>
             <div class="profit-line" style="margin-top:8px">
-              <span style="font-size:12px">Net/unit:</span><span class="profit-val" id="sc-net">—</span>
+              <span style="font-size:12px">Net/unit:</span><span class="profit-val" id="sc-net">?</span>
             </div>
             <div class="profit-line">
-              <span style="font-size:12px">Total P/L:</span><span class="profit-val" id="sc-total">—</span>
+              <span style="font-size:12px">Total P/L:</span><span class="profit-val" id="sc-total">?</span>
             </div>
             <div class="profit-line">
-              <span style="font-size:12px">Margin:</span><span class="profit-val" id="sc-pct">—</span>
+              <span style="font-size:12px">Margin:</span><span class="profit-val" id="sc-pct">?</span>
             </div>
           </div>
           <div class="err-box" id="sell-err" style="margin-top:10px"></div>
@@ -659,9 +675,9 @@ tr:hover td{background:rgba(255,255,255,.02)}
             <div class="date-bar">
               <button class="btn btn-ghost btn-sm" onclick="filterSales('today')" id="sb-today" style="background:rgba(230,57,70,.15);color:var(--brand)">Today</button>
               <button class="btn btn-ghost btn-sm" onclick="filterSales('all')" id="sb-all">All</button>
-              <input type="date" id="sell-date-from" onchange="filterSales('range')">
+              <input type="date" id="sell-date-from" onchange="filterSales('range')" oninput="filterSales('range')">
               <span style="font-size:12px;color:var(--text2)">to</span>
-              <input type="date" id="sell-date-to" onchange="filterSales('range')">
+              <input type="date" id="sell-date-to" onchange="filterSales('range')" oninput="filterSales('range')">
             </div>
           </div>
           <table>
@@ -761,8 +777,8 @@ tr:hover td{background:rgba(255,255,255,.02)}
             <div class="fld">
               <label>Currency Symbol</label>
               <select id="currency-sym">
-                <option value="Rs.">Rs. — Indian Rupee</option>
-                <option value="$">$ — USD</option>
+                <option value="Rs.">Rs. ? Indian Rupee</option>
+                <option value="$">$ ? USD</option>
               </select>
             </div>
           </div>
@@ -860,8 +876,12 @@ async function loadInit() {
 function normaliseProduct(p) {
   p.price = Number(p.price) || 0;
   p.qty   = Number(p.qty)   || 0;
+  p.num   = String(p.num  || '').trim();   // product number ? keep as string
+  p.name  = String(p.name || '').trim();
+  p.cat   = String(p.cat  || '').trim();
+  p.type  = String(p.type || '').trim();
   if (typeof p.sizes === 'string') {
-    try { p.sizes = JSON.parse(p.sizes); } catch { p.sizes = {}; }
+    try { p.sizes = JSON.parse(p.sizes); } catch(e) { p.sizes = {}; }
   }
   if (!p.sizes || typeof p.sizes !== 'object') p.sizes = {};
   return p;
@@ -1146,9 +1166,9 @@ function renderProducts() {
 }
 
 function fmtSizeChips(sizes) {
-  if (!sizes || typeof sizes !== 'object') return '—';
+  if (!sizes || typeof sizes !== 'object') return '?';
   const entries = Object.entries(sizes).filter(([,v]) => Number(v) > 0);
-  if (!entries.length) return '—';
+  if (!entries.length) return '?';
   return entries.map(([k, v]) =>
     '<span class="sz-chip">' + k.replace('Size ','Sz') + ':' + v + '</span>'
   ).join('');
@@ -1163,7 +1183,7 @@ function goReduceProduct(id) {
 }
 
 // ============================================================
-// SIZE MAP — Baby Sizes Logic
+// SIZE MAP ? Baby Sizes Logic
 // ============================================================
 const sizeMapStd = {
   'Chappal':      ['Size 5','Size 6','Size 7','Size 8','Size 9','Size 10','Size 11'],
@@ -1197,7 +1217,7 @@ function selCat(el, name) {
 }
 
 // ============================================================
-// ADD STOCK — OTHER TYPE HANDLING
+// ADD STOCK ? OTHER TYPE HANDLING
 // ============================================================
 function onTypeChange() {
   const type = document.getElementById('add-prod-type').value;
@@ -1239,7 +1259,7 @@ function checkQtyMatch() {
     msg.textContent = 'Quantities match! Total: ' + sum;
   } else {
     msg.className = 'qty-match err';
-    msg.textContent = 'Mismatch — sizes: ' + sum + ' vs total: ' + total;
+    msg.textContent = 'Mismatch ? sizes: ' + sum + ' vs total: ' + total;
   }
 }
 
@@ -1256,7 +1276,7 @@ async function addStock() {
 
   const inputs = [...document.querySelectorAll('#size-grid input')];
   const sum    = inputs.reduce((a, i) => a + (parseInt(i.value) || 0), 0);
-  if (sum !== total) { toast('!', 'Qty mismatch', 'Sizes sum ' + sum + ' ≠ total ' + total); return; }
+  if (sum !== total) { toast('!', 'Qty mismatch', 'Sizes sum ' + sum + ' ? total ' + total); return; }
 
   const sizes = {};
   inputs.forEach(i => { sizes[i.dataset.size] = parseInt(i.value) || 0; });
@@ -1289,16 +1309,15 @@ async function addStock() {
 // REDUCE STOCK
 // ============================================================
 function loadReduceDropdown() {
-  const sel = document.getElementById('red-prod-sel');
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">-- Select Product --</option>' +
-    products.map(p => '<option value="' + p.id + '">' + p.name + ' (' + (p.num||'') + ') — Qty:' + p.qty + '</option>').join('');
-  if (cur) { sel.value = cur; loadReduceSizes(); }
-  else document.getElementById('red-sizes-wrap').style.display = 'none';
+  // With new search UI, just reset if nothing selected
+  const cur = document.getElementById('red-prod-sel').value;
+  if (!cur) {
+    document.getElementById('red-sizes-wrap').style.display = 'none';
+  }
 }
 
 function loadReduceSizes() {
-  const id   = document.getElementById('red-prod-sel').value;
+  const id   = document.getElementById('red-prod-sel') ? document.getElementById('red-prod-sel').value : '';
   const wrap = document.getElementById('red-sizes-wrap');
   if (!id) { wrap.style.display = 'none'; return; }
   const p = products.find(x => String(x.id) === String(id));
@@ -1320,7 +1339,7 @@ function loadReduceSizes() {
 }
 
 async function applyReduce() {
-  const id = document.getElementById('red-prod-sel').value;
+  const id = document.getElementById('red-prod-sel') ? document.getElementById('red-prod-sel').value : '';
   if (!id) return;
   const p      = products.find(x => String(x.id) === String(id));
   if (!p) return;
@@ -1355,7 +1374,7 @@ async function applyReduce() {
 }
 
 async function deleteProduct() {
-  const id = document.getElementById('red-prod-sel').value;
+  const id = document.getElementById('red-prod-sel') ? document.getElementById('red-prod-sel').value : '';
   if (!id) return;
   const p = products.find(x => String(x.id) === String(id));
   if (!p) return;
@@ -1389,115 +1408,182 @@ async function deleteProduct() {
 // ============================================================
 // SELL STOCK
 // ============================================================
-function renderSellDropdown() {
-  const sel = document.getElementById('sell-prod');
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">-- Select Product --</option>' +
-    products.filter(p => p.qty > 0).map(p =>
-      '<option value="' + p.id + '">' + p.name + ' (' + (p.num||'') + ') Qty:' + p.qty + '</option>'
-    ).join('');
-  if (cur) sel.value = cur;
+// -- SEARCH DROPDOWN HELPER --
+// ============================================================
+
+// Build one dropdown item using DOM (no string injection = no syntax error)
+function buildItem(id, name, num, qty, cat, clickFn) {
+  var div = document.createElement('div');
+  div.style.cssText = 'padding:10px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.07);font-size:13px';
+  div.onmouseover = function(){ this.style.background='#2a2a40'; };
+  div.onmouseout  = function(){ this.style.background=''; };
+  div.onclick     = function(){ clickFn(String(id), String(name), String(num||'')); };
+  var low = (qty <= 5) ? ' <span style="color:#F59E0B;font-size:10px">? Low</span>' : '';
+  div.innerHTML =
+    '<strong>' + name + '</strong>' + low +
+    '<span style="display:block;font-size:11px;color:#9898B8;margin-top:2px">' +
+    'No: ' + (num||'-') + ' | Qty: ' + qty + ' | ' + cat +
+    '</span>';
+  return div;
+}
+
+// Common search filter
+function searchProducts(q, includeZeroQty) {
+  var ql = q.toLowerCase().trim();
+  return products.filter(function(p) {
+    if (!includeZeroQty && p.qty <= 0) return false;
+    if (!ql) return false;
+    var inName = (p.name||'').toLowerCase().indexOf(ql) > -1;
+    var inNum  = String(p.num||'').toLowerCase().indexOf(ql) > -1;
+    var inCat  = (p.cat||'').toLowerCase().indexOf(ql) > -1;
+    return inName || inNum || inCat;
+  });
+}
+
+// -- SELL STOCK SEARCH --
+function filterSellDropdown() {
+  var q       = document.getElementById('sell-search').value;
+  var box     = document.getElementById('sell-dropdown-list');
+  var info    = document.getElementById('sell-match-info');
+  var filtered = searchProducts(q, false);
+
+  box.innerHTML = '';
+  if (!q.trim()) { box.style.display='none'; info.textContent=''; return; }
+
+  if (filtered.length === 0) {
+    var msg = document.createElement('div');
+    msg.style.cssText = 'padding:12px 14px;font-size:13px;color:#6060A0';
+    msg.textContent = 'Product ???? ? ??? number/name try ?????';
+    box.appendChild(msg);
+    box.style.display = 'block';
+    info.textContent = '';
+    return;
+  }
+
+  filtered.forEach(function(p) {
+    box.appendChild(buildItem(p.id, p.name, p.num, p.qty, p.cat, selectSellProd));
+  });
+  box.style.display = 'block';
+  info.textContent = filtered.length + ' product(s) found ? click to select';
+  info.style.color = '#9898B8';
+
+  if (filtered.length === 1) {
+    selectSellProd(String(filtered[0].id), String(filtered[0].name), String(filtered[0].num||''));
+  }
+}
+
+function selectSellProd(id, name, num) {
+  var label = name + (num ? ' (No: ' + num + ')' : '');
+  document.getElementById('sell-prod').value = id;
+  document.getElementById('sell-search').value = '';
+  document.getElementById('sell-dropdown-list').style.display = 'none';
+  document.getElementById('sell-selected-box').style.display = 'flex';
+  document.getElementById('sell-selected-name').textContent  = label;
+  document.getElementById('sell-match-info').textContent     = '';
   sellProdChanged();
 }
 
-function sellProdChanged() {
-  const id    = document.getElementById('sell-prod').value;
-  const szSel = document.getElementById('sell-size');
-  szSel.innerHTML = '<option value="">-- Select Size --</option>';
-  if (!id) { document.getElementById('sell-calc').style.display = 'none'; return; }
-  const p = products.find(x => String(x.id) === String(id));
-  if (!p) return;
-  Object.entries(p.sizes || {}).filter(([,v]) => Number(v) > 0).forEach(([sz, qty]) => {
-    const opt = document.createElement('option');
-    opt.value = sz;
-    opt.textContent = sz + ' (Stock: ' + qty + ')';
-    szSel.appendChild(opt);
+function clearSellSearch() {
+  document.getElementById('sell-prod').value = '';
+  document.getElementById('sell-search').value = '';
+  document.getElementById('sell-selected-box').style.display = 'none';
+  document.getElementById('sell-dropdown-list').style.display = 'none';
+  document.getElementById('sell-match-info').textContent = '';
+  document.getElementById('sell-size').innerHTML = '<option value="">-- Select Size --</option>';
+  document.getElementById('sell-calc').style.display = 'none';
+}
+
+function renderSellDropdown() { clearSellSearch(); }
+
+// -- REDUCE STOCK SEARCH --
+function filterReduceDropdown() {
+  var q        = document.getElementById('red-search').value;
+  var box      = document.getElementById('red-dropdown-list');
+  var filtered = searchProducts(q, true); // include zero qty products too
+
+  box.innerHTML = '';
+  if (!q.trim()) { box.style.display='none'; return; }
+
+  if (filtered.length === 0) {
+    var msg2 = document.createElement('div');
+    msg2.style.cssText = 'padding:12px 14px;font-size:13px;color:#6060A0';
+    msg2.textContent = 'Product ???? ? ??? number/name try ?????';
+    box.appendChild(msg2);
+    box.style.display = 'block';
+    return;
+  }
+
+  filtered.forEach(function(p) {
+    box.appendChild(buildItem(p.id, p.name, p.num, p.qty, p.cat, selectReduceProd));
   });
-  calcProfit();
-}
+  box.style.display = 'block';
 
-function calcProfit() {
-  const id  = document.getElementById('sell-prod').value;
-  const sp  = parseFloat(document.getElementById('sell-price').value) || 0;
-  const qty = parseInt(document.getElementById('sell-qty').value) || 1;
-  const calc = document.getElementById('sell-calc');
-  if (!id || !sp) { calc.style.display = 'none'; return; }
-  const p = products.find(x => String(x.id) === String(id));
-  if (!p) return;
-  calc.style.display = 'block';
-  const net   = sp - p.price;
-  const total = net * qty;
-  const pct   = p.price > 0 ? ((net / p.price) * 100).toFixed(1) : 0;
-  document.getElementById('sc-actual').textContent = curSym + p.price;
-  document.getElementById('sc-sell').textContent   = curSym + sp;
-  const nc = net >= 0 ? 'profit-pos' : 'profit-neg';
-  ['sc-net','sc-total','sc-pct'].forEach(id2 => document.getElementById(id2).className = 'profit-val ' + nc);
-  document.getElementById('sc-net').textContent   = (net   >= 0 ? '+' : '') + curSym + net.toFixed(2);
-  document.getElementById('sc-total').textContent = (total >= 0 ? '+' : '') + curSym + total.toFixed(2);
-  document.getElementById('sc-pct').textContent   = (pct   >= 0 ? '+' : '') + pct + '%';
-}
-
-async function doSell() {
-  const id       = document.getElementById('sell-prod').value;
-  const sizeName = document.getElementById('sell-size').value;
-  const sp       = parseFloat(document.getElementById('sell-price').value) || 0;
-  const qty      = parseInt(document.getElementById('sell-qty').value) || 1;
-  const errEl    = document.getElementById('sell-err');
-  errEl.style.display = 'none';
-
-  if (!id)       { errEl.textContent = 'Select a product.';   errEl.style.display = 'block'; return; }
-  if (!sizeName) { errEl.textContent = 'Select a size.';      errEl.style.display = 'block'; return; }
-  if (!sp)       { errEl.textContent = 'Enter selling price.'; errEl.style.display = 'block'; return; }
-
-  const p         = products.find(x => String(x.id) === String(id));
-  if (!p) return;
-  const sizeStock = ((p.sizes || {})[sizeName]) || 0;
-  if (qty > sizeStock) {
-    errEl.textContent = 'Only ' + sizeStock + ' left for ' + sizeName + '.';
-    errEl.style.display = 'block'; return;
-  }
-
-  const btn = document.getElementById('sell-btn');
-  btn.disabled = true;
-  btn.innerHTML = 'Processing... <span class="spin-sm"></span>';
-  const data = await api({action:'sellStock', prodId:p.id, sizeName, qty, sell:sp});
-  btn.disabled = false;
-  btn.textContent = 'Sell Product';
-
-  if (!data) return;
-  if (data.ok) {
-    p.qty   = data.newQty;
-    p.sizes = data.sizes;
-    toast('OK', 'Sold ' + qty + 'x ' + p.name, 'P/L: ' + (data.profit >= 0 ? '+' : '') + curSym + Number(data.profit).toFixed(2));
-    updateAll();
-    renderSellDropdown();
-    await loadSales();
-    ['sell-price','sell-qty'].forEach(i => document.getElementById(i).value = i === 'sell-qty' ? '1' : '');
-    document.getElementById('sell-prod').value = '';
-    document.getElementById('sell-size').innerHTML = '<option value="">-- Select Size --</option>';
-    document.getElementById('sell-calc').style.display = 'none';
-  } else {
-    errEl.textContent = data.msg;
-    errEl.style.display = 'block';
+  if (filtered.length === 1) {
+    selectReduceProd(String(filtered[0].id), String(filtered[0].name), String(filtered[0].num||''));
   }
 }
+
+function selectReduceProd(id, name, num) {
+  var label = name + (num ? ' (No: ' + num + ')' : '');
+  document.getElementById('red-prod-sel').value = id;
+  document.getElementById('red-search').value = '';
+  document.getElementById('red-dropdown-list').style.display = 'none';
+  document.getElementById('red-selected-box').style.display = 'flex';
+  document.getElementById('red-selected-name').textContent  = label;
+  loadReduceSizes();
+}
+
+function clearRedSearch() {
+  document.getElementById('red-prod-sel').value = '';
+  document.getElementById('red-search').value = '';
+  document.getElementById('red-selected-box').style.display = 'none';
+  document.getElementById('red-dropdown-list').style.display = 'none';
+  document.getElementById('red-sizes-wrap').style.display   = 'none';
+}
+
+function loadReduceDropdown() {
+  var cur = document.getElementById('red-prod-sel').value;
+  if (!cur) document.getElementById('red-sizes-wrap').style.display = 'none';
+}
+
+// Close dropdowns on outside click
+document.addEventListener('click', function(e) {
+  var sbox = document.getElementById('sell-dropdown-list');
+  var sinp = document.getElementById('sell-search');
+  if (sbox && sinp && e.target !== sinp && !sbox.contains(e.target)) {
+    sbox.style.display = 'none';
+  }
+  var rbox = document.getElementById('red-dropdown-list');
+  var rinp = document.getElementById('red-search');
+  if (rbox && rinp && e.target !== rinp && !rbox.contains(e.target)) {
+    rbox.style.display = 'none';
+  }
+});
 
 // ============================================================
 // UNDO SALE
 // ============================================================
-async function undoSale(saleId, prodName) {
+async function undoSale(saleRef, prodName, prodId, tsEnc) {
   const ok = await confirm2(
     'Undo this sale?',
-    prodName + ' — Stock will be restored automatically.',
+    prodName + ' ? Stock will be restored automatically.',
     'Undo Sale'
   );
   if (!ok) return;
-  const data = await api({action:'undoSale', saleId});
+
+  const ts = decodeURIComponent(tsEnc);
+
+  const data = await api({action: 'undoSale', prodId, ts});
   if (!data) return;
+
   if (data.ok) {
-    toast('OK', 'Sale undone', 'Stock restored');
-    const init = await api({action:'init'});
-    if (init && init.ok) { products = init.products.map(normaliseProduct); updateAll(); }
+    toast('OK', 'Sale undone!', prodName + ' stock restored');
+    const init = await api({action: 'init'});
+    if (init && init.ok) {
+      products = init.products.map(normaliseProduct);
+      updateAll();
+      renderSellDropdown();
+    }
     await loadSales();
   } else {
     toast('!', 'Error', data.msg);
@@ -1514,43 +1600,61 @@ async function loadSales() {
 
 function filterSales(mode) {
   salesFilter = mode;
-  ['today','all'].forEach(m => {
-    const el = document.getElementById('sb-' + m);
-    if (el) el.style.cssText = m === mode ? 'background:rgba(230,57,70,.15);color:var(--brand)' : '';
-  });
+  document.getElementById('sb-today').style.cssText = mode==='today' ? 'background:rgba(230,57,70,.15);color:var(--brand)' : '';
+  document.getElementById('sb-all').style.cssText   = mode==='all'   ? 'background:rgba(230,57,70,.15);color:var(--brand)' : '';
   renderSales();
 }
 
 function renderSales() {
-  const today = new Date().toDateString();
-  let list    = allSales;
-  if (salesFilter === 'today')
-    list = allSales.filter(s => new Date(s.ts).toDateString() === today);
-  else if (salesFilter === 'range') {
+  // Fix: parse timestamp robustly for filtering
+  function parseTs(ts) {
+    if (!ts) return null;
+    if (typeof ts === 'number') return new Date((ts - 25569) * 86400 * 1000);
+    const d = new Date(ts);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  const todayStr = new Date().toDateString();
+  let list = allSales;
+
+  if (salesFilter === 'today') {
+    list = allSales.filter(s => {
+      const d = parseTs(s.ts);
+      return d && d.toDateString() === todayStr;
+    });
+  } else if (salesFilter === 'range') {
     const from = document.getElementById('sell-date-from').value;
     const to   = document.getElementById('sell-date-to').value;
     if (from && to) {
       const fd = new Date(from);
-      const td = new Date(to); td.setHours(23,59,59);
-      list = allSales.filter(s => { const d = new Date(s.ts); return d >= fd && d <= td; });
+      const td = new Date(to); td.setHours(23,59,59,999);
+      list = allSales.filter(s => {
+        const d = parseTs(s.ts);
+        return d && d >= fd && d <= td;
+      });
     }
   }
+
   const tbody = document.getElementById('sales-tbody');
   if (!list.length) {
     tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:2rem">No sales found</td></tr>';
     return;
   }
-  tbody.innerHTML = list.map(s => {
-    const nc = s.profit >= 0 ? '#86EFAC' : '#FCA5A5';
+  tbody.innerHTML = list.map((s, idx) => {
+    const nc      = Number(s.profit) >= 0 ? '#86EFAC' : '#FCA5A5';
+    const profit  = Number(s.profit) || 0;
+    const pct     = Number(s.pct) || 0;
+    // prodId used for undo; use index as fallback id since sheet has no id column
+    const saleRef = s.prodId + '||' + (s.ts || idx);
     return '<tr>' +
       '<td style="font-size:12px;color:var(--text2)">' + fmtTime(s.ts) + '</td>' +
-      '<td style="font-weight:500">' + s.prod + '</td>' +
-      '<td><span class="cat-tag">' + (s.sizeName || '—') + '</span></td>' +
-      '<td>' + s.qty + '</td>' +
-      '<td>' + curSym + s.sell + '</td>' +
-      '<td style="color:' + nc + ';font-weight:600">' + (s.profit >= 0 ? '+' : '') + curSym + Number(s.profit).toFixed(2) + '</td>' +
-      '<td style="color:' + nc + '">' + (s.pct >= 0 ? '+' : '') + s.pct + '%</td>' +
-      '<td><button class="btn btn-danger btn-xs" onclick="undoSale(\'' + s.id + '\',\'' + s.prod.replace(/'/g,"\\'") + '\')">Undo</button></td>' +
+      '<td style="font-weight:500">' + (s.prod || '?') + '</td>' +
+      '<td><span class="cat-tag">' + (s.note || '?') + '</span></td>' +
+      '<td>' + (s.qty || 0) + '</td>' +
+      '<td>' + curSym + (s.sell || 0) + '</td>' +
+      '<td style="color:' + nc + ';font-weight:600">' + (profit >= 0 ? '+' : '') + curSym + profit.toFixed(2) + '</td>' +
+      '<td style="color:' + nc + '">' + (pct >= 0 ? '+' : '') + pct + '%</td>' +
+      '<td><button class="btn btn-danger btn-xs" onclick="undoSale(\'' + encodeURIComponent(saleRef) + '\',\'' + (s.prod||'').replace(/'/g,"\\'") + '\',\'' + (s.prodId||'') + '\',\'' + encodeURIComponent(s.ts||'') + '\')">Undo</button></td>' +
     '</tr>';
   }).join('');
 }
@@ -1788,7 +1892,16 @@ function toast(icon, msg, sub) {
 
 function fmtTime(ts) {
   if (!ts) return '';
-  return new Date(ts).toLocaleDateString('en-IN', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+  // Handle Google Sheets date serial numbers and ISO strings
+  let d;
+  if (typeof ts === 'number') {
+    // Google Sheets serial: days since Dec 30, 1899
+    d = new Date((ts - 25569) * 86400 * 1000);
+  } else {
+    d = new Date(ts);
+  }
+  if (isNaN(d.getTime())) return String(ts);
+  return d.toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'});
 }
 
 // Init
@@ -1796,8 +1909,3 @@ updateSizes();
 </script>
 </body>
 </html>
-HTMLEOF
-echo "index.html done"
-Output
-
-index.html done
